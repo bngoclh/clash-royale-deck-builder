@@ -12,10 +12,8 @@ router.post("/getBattleData", async (req, res) => {
     const battleData = battles.map((battle) => ({
       result:
         battle.team[0].crowns > battle.opponent[0].crowns ? "Win" : "Loss",
-      playerDeck: battle.team[0].cards.map((card) => card.name).join(", "),
-      opponentDeck: battle.opponent[0].cards
-        .map((card) => card.name)
-        .join(", "),
+      playerDeck: battle.team[0].cards.map((card) => card.name),
+      opponentDeck: battle.opponent[0].cards.map((card) => card.name),
       playerElixirCost: (
         battle.team[0].cards.reduce((acc, card) => acc + card.elixirCost, 0) /
         battle.team[0].cards.length
@@ -29,10 +27,9 @@ router.post("/getBattleData", async (req, res) => {
       playerCrowns: battle.team[0].crowns,
       opponentCrowns: battle.opponent[0].crowns,
       playerKingTowerHP: battle.team[0].kingTowerHitPoints,
-      playerPrincessTowersHP: battle.team[0].princessTowersHitPoints.join(", "),
+      playerPrincessTowersHP: battle.team[0].princessTowersHitPoints,
       opponentKingTowerHP: battle.opponent[0].kingTowerHitPoints,
-      opponentPrincessTowersHP:
-        battle.opponent[0].princessTowersHitPoints.join(", "),
+      opponentPrincessTowersHP: battle.opponent[0].princessTowersHitPoints,
     }));
 
     res.json(battleData);
