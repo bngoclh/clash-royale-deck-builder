@@ -67,7 +67,7 @@ const findMostUsedDeck = (battles) => {
   ) {
     return {
       message:
-        "Le joueur utilise un deck différent pour chaque match, veuillez essayer avec un autre joueur.",
+        "Le joueur utilise un deck Le joueur utilise un deck différent pour chaque match.  Il est recommandé de jouer avec plusieurs decks pour obtenir des statistiques plus significatives.",
     };
   }
 
