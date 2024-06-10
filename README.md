@@ -10,13 +10,18 @@ To get the backend server running, follow these steps:
    cd backend
    npm install
 
+   ```
+
 2. **Create a .env file add the following variables:**
 
-    ```sh
-    PORT=port_number
-    API_KEY=your_clash_royle_api_key
+   ```sh
+   PORT=port_number
+   API_KEY=your_clash_royale_api_key
+
+   ```
 
 3. **Start the server**
 
-    ```sh
-    npm start
+   ```sh
+   npm start
+   ```
