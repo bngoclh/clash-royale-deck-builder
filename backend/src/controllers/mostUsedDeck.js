@@ -1,4 +1,5 @@
 const MostUsedDeck = require("../models/MostUsedDeck"); // Import the model
+
 // Function to find the most used deck
 const findMostUsedDeck = (battles) => {
   const deckUsage = {}; // Dictionnaire pour compter l'utilisation de chaque deck
@@ -120,30 +121,26 @@ const findMostUsedDeck = (battles) => {
 };
 
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données
-const saveMostUsedDeck = async (playertag, mostUsedDeckData) => {
-  console.log(
-    "Préparation pour sauvegarder le deck le plus utilisé:",
-    mostUsedDeckData
-  );
+const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
+  console.log("Preparing to save most used deck:", mostUsedDeckData);
 
   const mostUsedDeck = new MostUsedDeck({
     playertag,
-    mostUsedDeck: mostUsedDeckData.cards, // Sauvegarde les cartes
+    playerName, // Inclure le nom du joueur
     elixir: mostUsedDeckData.elixir,
     winRate: mostUsedDeckData.winRate,
+    cards: mostUsedDeckData.cards,
   });
 
   try {
     await mostUsedDeck.save();
-    console.log("Deck le plus utilisé sauvegardé dans la base de données");
+    console.log("Most used deck saved to the database");
   } catch (error) {
     console.error(
-      "Erreur lors de la sauvegarde du deck le plus utilisé dans la base de données:",
+      "Error saving most used deck to the database:",
       error.message
     );
-    throw new Error(
-      "Échec de la sauvegarde du deck le plus utilisé dans la base de données"
-    );
+    throw new Error("Failed to save most used deck to the database");
   }
 };
 
