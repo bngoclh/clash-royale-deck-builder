@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { getPlayerBattles } = require("../controllers/playerBattlelog");
+const { getPlayerInfo } = require("../controllers/playerData");
+
 const {
   findMostUsedDeck,
   saveMostUsedDeck,
@@ -53,13 +55,16 @@ router.post("/getMostUsedDeck/:playertag", async (req, res) => {
     console.log(
       `Received request to get most used deck for player ${playerTag}`
     );
+    const playerInfo = await getPlayerInfo(playerTag);
+    const playerName = playerInfo.name;
+    console.log(`Retrieved player name: ${playerName}`);
 
     const battles = await getPlayerBattles(playerTag);
     console.log(`Analyzing decks for player ${playerTag}`);
 
     const result = findMostUsedDeck(battles);
-    await saveMostUsedDeck(playerTag, result);
-    res.json(result);
+    await saveMostUsedDeck(playerTag, playerName, result);
+    res.json({ playerName, ...result });
   } catch (error) {
     console.error(
       `Error processing request for player ${playerTag}:`,
