@@ -55,6 +55,7 @@ router.post("/getMostUsedDeck/:playertag", async (req, res) => {
     console.log(
       `Received request to get most used deck for player ${playerTag}`
     );
+
     const playerInfo = await getPlayerInfo(playerTag);
     const playerName = playerInfo.name;
     console.log(`Retrieved player name: ${playerName}`);
