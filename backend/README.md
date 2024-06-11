@@ -17,6 +17,7 @@ To get the backend server running, follow these steps:
    ```sh
    PORT=port_number
    API_KEY=your_clash_royale_api_key
+   MONGO_URI=your-mongodb_connection_url
 
    ```
 
