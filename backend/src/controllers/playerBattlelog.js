@@ -12,7 +12,7 @@ const getPlayerBattles = async (playertag) => {
       }
     );
 
-    const battles = response.data.slice(0, 25); // Limit to the last 25 matches
+    const battles = response.data;
     console.log(`Retrieved ${battles.length} battles for player ${playertag}`);
     return battles;
   } catch (error) {
