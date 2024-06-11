@@ -1,40 +1,49 @@
+const MostUsedDeck = require("../models/MostUsedDeck"); // Import the model
+// Function to find the most used deck
 const findMostUsedDeck = (battles) => {
   const deckUsage = {}; // Dictionnaire pour compter l'utilisation de chaque deck
 
   // Parcourt chaque bataille pour analyser les decks utilisés et les résultats des matchs
   battles.forEach((battle) => {
     if (battle.team && battle.team.length > 0) {
-      // Crée une représentation unique du deck en triant les noms des cartes
-      const deck = battle.team[0].cards
+      // Utilise un tableau d'objets pour représenter le deck
+      const deck = battle.team[0].cards.map((card) => {
+        return {
+          name: card.name,
+          elixirCost: card.elixirCost,
+          rarity: card.rarity,
+        };
+      });
+      // Crée une clé unique pour le deck basée sur les noms des cartes triés
+      const deckKey = deck
         .map((card) => card.name)
         .sort()
         .join(",");
+
       // Calcule le coût moyen en élixir du deck
-      const elixirSum = battle.team[0].cards.reduce(
-        (acc, card) => acc + card.elixirCost,
-        0
-      );
-      const averageElixir = elixirSum / battle.team[0].cards.length;
+      const elixirSum = deck.reduce((acc, card) => acc + card.elixirCost, 0);
+      const averageElixir = elixirSum / deck.length;
       // Détermine si la bataille est une victoire
       const victory = battle.team[0].crowns > battle.opponent[0].crowns;
 
       // Si le deck n'a pas encore été rencontré, initialise ses valeurs
-      if (!deckUsage[deck]) {
-        deckUsage[deck] = {
+      if (!deckUsage[deckKey]) {
+        deckUsage[deckKey] = {
           count: 0,
           elixir: averageElixir,
           wins: 0,
           losses: 0,
+          cards: deck, // Stocke le tableau d'objets de cartes
         };
       }
 
       // Incrémente le compteur d'utilisation pour ce deck
-      deckUsage[deck].count += 1;
+      deckUsage[deckKey].count += 1;
       // Incrémente le compteur de victoires ou de défaites pour ce deck
       if (victory) {
-        deckUsage[deck].wins += 1;
+        deckUsage[deckKey].wins += 1;
       } else {
-        deckUsage[deck].losses += 1;
+        deckUsage[deckKey].losses += 1;
       }
     }
   });
@@ -56,6 +65,7 @@ const findMostUsedDeck = (battles) => {
       elixir: deck.elixir,
       winRate: winRate.toFixed(2) + "%",
       count: deck.count, // Ajout du nombre de fois que le deck a été utilisé
+      cards: deck.cards, // Inclure les cartes du deck
     };
   }
 
@@ -67,7 +77,7 @@ const findMostUsedDeck = (battles) => {
   ) {
     return {
       message:
-        "Le joueur utilise un deck Le joueur utilise un deck différent pour chaque match.  Il est recommandé de jouer avec plusieurs decks pour obtenir des statistiques plus significatives.",
+        "Le joueur utilise un deck différent pour chaque match.  Il est recommandé de jouer avec plusieurs decks pour obtenir des statistiques plus significatives.",
     };
   }
 
@@ -83,6 +93,7 @@ const findMostUsedDeck = (battles) => {
       elixir: deck.elixir,
       winRate: winRate.toFixed(2) + "%",
       count: deck.count, // Ajout du nombre de fois que le deck a été utilisé
+      cards: deck.cards, // Inclure les cartes du deck
     };
   }
 
@@ -104,7 +115,36 @@ const findMostUsedDeck = (battles) => {
     elixir: bestWinRateDeck[1].elixir,
     winRate: winRate.toFixed(2) + "%",
     count: bestWinRateDeck[1].count, // Ajout du nombre de fois que le deck a été utilisé
+    cards: bestWinRateDeck[1].cards, // Inclure les cartes du deck
   };
 };
 
-module.exports = { findMostUsedDeck };
+// Fonction pour sauvegarder le deck le plus utilisé dans la base de données
+const saveMostUsedDeck = async (playertag, mostUsedDeckData) => {
+  console.log(
+    "Préparation pour sauvegarder le deck le plus utilisé:",
+    mostUsedDeckData
+  );
+
+  const mostUsedDeck = new MostUsedDeck({
+    playertag,
+    mostUsedDeck: mostUsedDeckData.cards, // Sauvegarde les cartes
+    elixir: mostUsedDeckData.elixir,
+    winRate: mostUsedDeckData.winRate,
+  });
+
+  try {
+    await mostUsedDeck.save();
+    console.log("Deck le plus utilisé sauvegardé dans la base de données");
+  } catch (error) {
+    console.error(
+      "Erreur lors de la sauvegarde du deck le plus utilisé dans la base de données:",
+      error.message
+    );
+    throw new Error(
+      "Échec de la sauvegarde du deck le plus utilisé dans la base de données"
+    );
+  }
+};
+
+module.exports = { findMostUsedDeck, saveMostUsedDeck };
