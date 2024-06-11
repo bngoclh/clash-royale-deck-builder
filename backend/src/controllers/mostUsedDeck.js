@@ -127,9 +127,10 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
   const mostUsedDeck = new MostUsedDeck({
     playertag,
     playerName, // Inclure le nom du joueur
+    cards: mostUsedDeckData.cards,
     elixir: mostUsedDeckData.elixir,
     winRate: mostUsedDeckData.winRate,
-    cards: mostUsedDeckData.cards,
+    count: mostUsedDeckData.count,
   });
 
   try {
