@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { getPlayerBattles } = require("../controllers/playerBattlelog");
 const { getPlayerInfo } = require("../controllers/playerData");
-
 const {
   findMostUsedDeck,
   saveMostUsedDeck,
@@ -11,6 +10,7 @@ const {
 // Route POST pour obtenir les données des batailles d'un joueur
 router.post("/getBattleData/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
+
   try {
     console.log(`Received request to get battle data for player ${playerTag}`);
     const battles = await getPlayerBattles(playerTag);
@@ -51,12 +51,14 @@ router.post("/getBattleData/:playertag", async (req, res) => {
 // Route POST pour obtenir le deck le plus utilisé par un joueur
 router.post("/getMostUsedDeck/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
+
   try {
     console.log(
       `Received request to get most used deck for player ${playerTag}`
     );
 
     const playerInfo = await getPlayerInfo(playerTag);
+
     const playerName = playerInfo.name;
     console.log(`Retrieved player name: ${playerName}`);
 
