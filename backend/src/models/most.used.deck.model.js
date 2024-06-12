@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const cardSchema = require("./Card").schema;
+const cardSchema = require("./card.model").schema;
 
 const mostUsedDeckSchema = new mongoose.Schema({
   playertag: { type: String, required: true },

@@ -1,4 +1,4 @@
-const MostUsedDeck = require("../models/MostUsedDeck"); // Import the model
+const MostUsedDeck = require("../models/most.used.deck.model");
 
 // Function to find the most used deck
 const findMostUsedDeck = (battles) => {
@@ -65,8 +65,8 @@ const findMostUsedDeck = (battles) => {
       mostUsedDeck: sortedDecks[0][0],
       elixir: deck.elixir,
       winRate: winRate.toFixed(2) + "%",
-      count: deck.count, // Ajout du nombre de fois que le deck a été utilisé
-      cards: deck.cards, // Inclure les cartes du deck
+      count: deck.count,
+      cards: deck.cards,
     };
   }
 
@@ -93,8 +93,8 @@ const findMostUsedDeck = (battles) => {
       mostUsedDeck: mostUsedDecks[0][0],
       elixir: deck.elixir,
       winRate: winRate.toFixed(2) + "%",
-      count: deck.count, // Ajout du nombre de fois que le deck a été utilisé
-      cards: deck.cards, // Inclure les cartes du deck
+      count: deck.count,
+      cards: deck.cards,
     };
   }
 
@@ -115,8 +115,8 @@ const findMostUsedDeck = (battles) => {
     mostUsedDeck: bestWinRateDeck[0],
     elixir: bestWinRateDeck[1].elixir,
     winRate: winRate.toFixed(2) + "%",
-    count: bestWinRateDeck[1].count, // Ajout du nombre de fois que le deck a été utilisé
-    cards: bestWinRateDeck[1].cards, // Inclure les cartes du deck
+    count: bestWinRateDeck[1].count,
+    cards: bestWinRateDeck[1].cards,
   };
 };
 
@@ -126,7 +126,7 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
 
   const mostUsedDeck = new MostUsedDeck({
     playertag,
-    playerName, // Inclure le nom du joueur
+    playerName,
     cards: mostUsedDeckData.cards,
     elixir: mostUsedDeckData.elixir,
     winRate: mostUsedDeckData.winRate,
