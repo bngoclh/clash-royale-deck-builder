@@ -11,12 +11,14 @@ const axiosInstance = axios.create({
 });
 
 const getBattleLog = (playerTag: string) => {
-  const request = axios.get(`https://proxy.royaleapi.dev/v1/players/%23${playerTag}/battlelog`, {
+  const request = axios.post(`https://proxy.royaleapi.dev/v1/players/%23${playerTag}/battlelog`, {
     headers: {
       Authorization: `Bearer ${config.API_KEY}`,
     },
   });
   return request;
 }
+
+
 
 export default { axiosInstance, getBattleLog };

@@ -13,7 +13,7 @@ const SearchInput = () => {
 
   const HandleSearchBattleLog =() => {
     if (inputValue !== '') {
-      API
+      API  // call the getBattleLog function from the API-client.ts file 
       .getBattleLog(inputValue)
       .then((response) => {
         console.log(response.data);
