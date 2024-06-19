@@ -14,7 +14,7 @@ const SearchInput = () => {
   const HandleSearchBattleLog =() => {
     if (inputValue !== '') {
       API  // call the getBattleLog function from the API-client.ts file 
-      .getBattleLog(inputValue)
+      .getMostUsedDeck(inputValue)
       .then((response) => {
         console.log(response.data);
       })
