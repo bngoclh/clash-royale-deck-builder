@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 /**
  * Module dependencies.
  */
@@ -7,6 +6,12 @@
 var app = require("../app");
 var debug = require("debug")("backend:server");
 var http = require("http");
+
+// Check if CORS is enabled
+if (!app._router) {
+  console.error("CORS is not enabled. Please enable CORS in app.js.");
+  process.exit(1);
+}
 
 /**
  * Get port from environment and store in Express.
