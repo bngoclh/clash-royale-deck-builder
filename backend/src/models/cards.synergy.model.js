@@ -22,6 +22,7 @@ const SynergySchema = new mongoose.Schema({
   ],
   name: String,
 });
+
 const Synergy = mongoose.model("Synergy", SynergySchema, "cards-synergy");
 
 module.exports = Synergy;
