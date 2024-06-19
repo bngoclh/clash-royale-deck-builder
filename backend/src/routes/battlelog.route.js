@@ -3,7 +3,7 @@ const router = express.Router();
 const { getPlayerBattles } = require("../controllers/player.battlelog");
 
 // Route GET pour obtenir les données des batailles d'un joueur
-router.get("/getbattledata/:playertag", async (req, res) => {
+router.get("/battledata/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
 
   try {
