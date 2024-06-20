@@ -41,9 +41,10 @@ const getPlayerBattles = async (playertag) => {
   }
 };
 
-const pushBattleLog = async (battlelog) =>{
+const pushBattleLog = async (battlelog,playerTag) =>{
   try {
     const newBattleLog = new Battlelog({
+      battleId: playerTag,
       battlelog: battlelog,
     });
     await newBattleLog.save();

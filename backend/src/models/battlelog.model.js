@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const battlelogSchema = new mongoose.Schema({
+    battleId: String,
     battlelog: { type: Object, required: true },
     createdAt: {
         type: Date,
