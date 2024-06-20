@@ -102,7 +102,7 @@ const findMostUsedDeck = async (battles) => {
 
 //Fonction pour Obtenir les Synergies
 const getSynergies = async (deck) => {
-  const synergies = [];
+  const synergies_list = [];
 
   // Cherche les données de synergies pour les cartes du deck
   const synergyData = await Synergy.find({
@@ -111,7 +111,7 @@ const getSynergies = async (deck) => {
 
   for (let i = 0; i < deck.length; i++) {
     const cardA = deck[i];
-    const cardSynergies = { card: cardA.name, synergies: [] };
+    const cardSynergies = { card: cardA.name, synergies_list: [] };
 
     for (let j = i + 1; j < deck.length; j++) {
       const cardB = deck[j];
@@ -128,15 +128,15 @@ const getSynergies = async (deck) => {
         );
 
         if (cardBSynergy || cardASynergy) {
-          cardSynergies.synergies.push(cardB.name);
+          cardSynergies.synergies_list.push(cardB.name);
         }
       }
     }
 
-    synergies.push(cardSynergies);
+    synergies_list.push(cardSynergies);
   }
 
-  return synergies;
+  return synergies_list;
 };
 
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données
