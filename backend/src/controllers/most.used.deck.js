@@ -1,7 +1,7 @@
 const MostUsedDeck = require("../models/most.used.deck.model");
 const Synergy = require("../models/cards.synergy.model");
 
-// Function to find the most used deck
+// Fonction pour trouver le deck le plus utilisé
 const findMostUsedDeck = async (battles) => {
   const deckUsage = {}; // Dictionnaire pour compter l'utilisation de chaque deck
 
@@ -9,14 +9,12 @@ const findMostUsedDeck = async (battles) => {
   battles.forEach((battle) => {
     if (battle.team && battle.team.length > 0) {
       // Utilise un tableau d'objets pour représenter le deck
-      const deck = battle.team[0].cards.map((card) => {
-        return {
-          name: card.name,
-          elixirCost: card.elixirCost,
-          rarity: card.rarity,
-        };
-      });
-      // Crée une clé unique pour le deck basée sur les noms des cartes triés
+      const deck = battle.team[0].cards.map((card) => ({
+        name: card.name,
+        elixirCost: card.elixirCost,
+        rarity: card.rarity,
+      }));
+
       const deckKey = deck
         .map((card) => card.name)
         .sort()
@@ -25,6 +23,7 @@ const findMostUsedDeck = async (battles) => {
       // Calcule le coût moyen en élixir du deck
       const elixirSum = deck.reduce((acc, card) => acc + card.elixirCost, 0);
       const averageElixir = elixirSum / deck.length;
+
       // Détermine si la bataille est une victoire
       const victory = battle.team[0].crowns > battle.opponent[0].crowns;
 
@@ -35,13 +34,12 @@ const findMostUsedDeck = async (battles) => {
           elixir: averageElixir,
           wins: 0,
           losses: 0,
-          cards: deck, // Stocke le tableau d'objets de cartes
+          cards: deck,
         };
       }
 
       // Incrémente le compteur d'utilisation pour ce deck
       deckUsage[deckKey].count += 1;
-      // Incrémente le compteur de victoires ou de défaites pour ce deck
       if (victory) {
         deckUsage[deckKey].wins += 1;
       } else {
@@ -50,30 +48,26 @@ const findMostUsedDeck = async (battles) => {
     }
   });
 
-  console.log("Deck usage statistics:", deckUsage);
-
-  // Transforme le dictionnaire en une liste triée des decks par leur utilisation (décroissante)
   const sortedDecks = Object.entries(deckUsage).sort(
     (a, b) => b[1].count - a[1].count
   );
 
-  // Conditions :
-  // Si le joueur utilise un seul deck pour tous les matchs
+  //Si le joueur utilise un seul deck pour tous les matchs
   if (sortedDecks.length === 1) {
     const deck = sortedDecks[0][1];
     const winRate = (deck.wins / (deck.wins + deck.losses)) * 100;
-    const synergies = await checkSynergiesInDeck(deck.cards);
+    const synergies = await getSynergies(deck.cards);
     return {
       mostUsedDeck: sortedDecks[0][0],
       elixir: deck.elixir,
-      winRate: winRate.toFixed(2) + "%",
+      winRate: `${winRate.toFixed(2)}%`,
       count: deck.count,
       cards: deck.cards,
       synergies,
     };
   }
 
-  // Si le joueur utilise un deck différent pour chaque match
+  //Si le joueur utilise un deck différent pour chaque match
   if (
     sortedDecks.length > 0 &&
     sortedDecks[0][1].count === 1 &&
@@ -85,89 +79,63 @@ const findMostUsedDeck = async (battles) => {
     };
   }
 
-  // Si plusieurs decks sont les plus utilisés
+  //Si plusieurs decks sont les plus utilisés
   const mostUsedDecks = sortedDecks.filter(
     (deck) => deck[1].count === sortedDecks[0][1].count
   );
-  if (mostUsedDecks.length === 1) {
-    const deck = mostUsedDecks[0][1];
-    const winRate = (deck.wins / (deck.wins + deck.losses)) * 100;
-    const synergies = await getSynergies(deck.cards);
-    return {
-      mostUsedDeck: mostUsedDecks[0][0],
-      elixir: deck.elixir,
-      winRate: winRate.toFixed(2) + "%",
-      count: deck.count,
-      cards: deck.cards,
-      synergies,
-    };
-  }
 
   // On choisit le deck le plus utilisé avec le coût moyen d'élixir le plus faible
   const bestDeck = mostUsedDecks.sort((a, b) => a[1].elixir - b[1].elixir)[0];
-  // On choisit le deck avec le meilleur taux de victoire
-  const bestWinRateDeck = mostUsedDecks.sort((a, b) => {
-    const winRateA = a[1].wins / (a[1].wins + a[1].losses);
-    const winRateB = b[1].wins / (b[1].wins + b[1].losses);
-    return winRateB - winRateA;
-  })[0];
-
   const winRate =
-    (bestWinRateDeck[1].wins /
-      (bestWinRateDeck[1].wins + bestWinRateDeck[1].losses)) *
-    100;
-  const synergies = await getSynergies(deck.cards);
+    (bestDeck[1].wins / (bestDeck[1].wins + bestDeck[1].losses)) * 100;
+  const synergies = await getSynergies(bestDeck[1].cards);
+
   return {
-    mostUsedDeck: bestWinRateDeck[0],
-    elixir: bestWinRateDeck[1].elixir,
-    winRate: winRate.toFixed(2) + "%",
-    count: bestWinRateDeck[1].count,
-    cards: bestWinRateDeck[1].cards,
+    mostUsedDeck: bestDeck[0],
+    elixir: bestDeck[1].elixir,
+    winRate: `${winRate.toFixed(2)}%`,
+    count: bestDeck[1].count,
+    cards: bestDeck[1].cards,
     synergies,
   };
 };
 
+//Fonction pour Obtenir les Synergies
 const getSynergies = async (deck) => {
-  const synergies = {};
+  const synergies = [];
 
-  const allSynergies = await Synergy.find({
+  // Cherche les données de synergies pour les cartes du deck
+  const synergyData = await Synergy.find({
     name: { $in: deck.map((card) => card.name) },
   });
 
   for (let i = 0; i < deck.length; i++) {
     const cardA = deck[i];
-    synergies[cardA.name] = [];
+    const cardSynergies = { card: cardA.name, synergies: [] };
 
-    for (let j = 0; j < deck.length; j++) {
-      if (i !== j) {
-        const cardB = deck[j];
+    for (let j = i + 1; j < deck.length; j++) {
+      const cardB = deck[j];
 
-        try {
-          const synergyA = allSynergies.find(
-            (synergy) => synergy.name === cardA.name
-          );
-          const synergyB = allSynergies.find(
-            (synergy) => synergy.name === cardB.name
-          );
+      const synergyA = synergyData.find((s) => s.name === cardA.name);
+      const synergyB = synergyData.find((s) => s.name === cardB.name);
 
-          if (synergyA && synergyB) {
-            const cardBSynergy = synergyA.synergies.find(
-              (synergy) => synergy.card_slug === cardB.name
-            );
-            const cardASynergy = synergyB.synergies.find(
-              (synergy) => synergy.card_slug === cardA.name
-            );
+      if (synergyA && synergyB) {
+        const cardBSynergy = synergyA.synergies.find(
+          (s) => s.card_slug === cardB.name
+        );
+        const cardASynergy = synergyB.synergies.find(
+          (s) => s.card_slug === cardA.name
+        );
 
-            if (cardBSynergy || cardASynergy) {
-              synergies[cardA.name].push(cardB.name);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching synergies:", error);
+        if (cardBSynergy || cardASynergy) {
+          cardSynergies.synergies.push(cardB.name);
         }
       }
     }
+
+    synergies.push(cardSynergies);
   }
+
   return synergies;
 };
 
@@ -182,6 +150,7 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
     elixir: mostUsedDeckData.elixir,
     winRate: mostUsedDeckData.winRate,
     count: mostUsedDeckData.count,
+    synergies: mostUsedDeckData.synergies,
   });
 
   try {
