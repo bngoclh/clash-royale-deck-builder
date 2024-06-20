@@ -1,5 +1,5 @@
 const MostUsedDeck = require("../models/most.used.deck.model");
-const Synergy = require("../models/synergy.model");
+const Synergy = require("../models/cards.synergy.model");
 
 // Function to find the most used deck
 const findMostUsedDeck = async (battles) => {
@@ -130,6 +130,10 @@ const findMostUsedDeck = async (battles) => {
 const getSynergies = async (deck) => {
   const synergies = {};
 
+  const allSynergies = await Synergy.find({
+    name: { $in: deck.map((card) => card.name) },
+  });
+
   for (let i = 0; i < deck.length; i++) {
     const cardA = deck[i];
     synergies[cardA.name] = [];
@@ -139,16 +143,19 @@ const getSynergies = async (deck) => {
         const cardB = deck[j];
 
         try {
-          // Utilisez 'name' au lieu de 'slug'
-          const synergyA = await Synergy.findOne({ name: cardA.name });
-          const synergyB = await Synergy.findOne({ name: cardB.name });
+          const synergyA = allSynergies.find(
+            (synergy) => synergy.name === cardA.name
+          );
+          const synergyB = allSynergies.find(
+            (synergy) => synergy.name === cardB.name
+          );
 
           if (synergyA && synergyB) {
             const cardBSynergy = synergyA.synergies.find(
-              (synergy) => synergy.card_slug === cardB.name && synergy.dimmed
+              (synergy) => synergy.card_slug === cardB.name
             );
             const cardASynergy = synergyB.synergies.find(
-              (synergy) => synergy.card_slug === cardA.name && synergy.dimmed
+              (synergy) => synergy.card_slug === cardA.name
             );
 
             if (cardBSynergy || cardASynergy) {
@@ -161,21 +168,7 @@ const getSynergies = async (deck) => {
       }
     }
   }
-
-  const synergyMessages = [];
-  for (const [card, synergisticCards] of Object.entries(synergies)) {
-    if (synergisticCards.length > 0) {
-      let message = `La carte ${card} a une synergie `;
-      if (synergisticCards.length === 1) {
-        message += `avec la carte ${synergisticCards[0]}`;
-      } else {
-        message += `avec les cartes ${synergisticCards.join(", ")}`;
-      }
-      synergyMessages.push(message);
-    }
-  }
-
-  return synergyMessages;
+  return synergies;
 };
 
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données
