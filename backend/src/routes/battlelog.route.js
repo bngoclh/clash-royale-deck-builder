@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { getPlayerBattles } = require("../controllers/player.battlelog");
+const { pushBattleLog } = require("../controllers/player.battlelog");
+
 
 // Route GET pour obtenir les données des batailles d'un joueur
 router.get("/battledata/:playertag", async (req, res) => {
@@ -42,6 +44,14 @@ router.get("/battledata/:playertag", async (req, res) => {
     );
     res.status(500).json({ error: error.message });
   }
+});
+
+router.post("/pushbattledata/:playertag", async (req, res) => {
+  const playerTag = req.params.playertag;
+  const battles = await getPlayerBattles(playerTag);
+  //const battleDataJson = JSON.stringify(battles);
+  pushBattleLog(battles);
+
 });
 
 module.exports = router;
