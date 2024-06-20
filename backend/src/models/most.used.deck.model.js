@@ -8,6 +8,12 @@ const mostUsedDeckSchema = new mongoose.Schema({
   elixir: { type: Number, required: true },
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
+  synergies: [
+    {
+      card: { type: String, required: true },
+      synergies: [{ type: String, required: true }],
+    },
+  ],
   date: { type: Date, default: Date.now },
 });
 
