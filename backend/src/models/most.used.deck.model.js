@@ -11,7 +11,13 @@ const mostUsedDeckSchema = new mongoose.Schema({
   synergies: [
     {
       card: { type: String, required: true },
-      synergies: [{ type: String, required: true }],
+      synergies_list: [{ type: String, required: true }],
+    },
+  ],
+  solo_cards: [
+    {
+      card_name: { type: String, required: true },
+      alternatives: [{ type: String, required: true }],
     },
   ],
   date: { type: Date, default: Date.now },
