@@ -49,7 +49,7 @@ router.get("/battledata/:playertag", async (req, res) => {
 router.post("/pushbattledata/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
   const battles = await getPlayerBattles(playerTag);
-  //const battleDataJson = JSON.stringify(battles);
+  const battleDataJson = JSON.stringify(battles);
   pushBattleLog(battles);
 
 });
