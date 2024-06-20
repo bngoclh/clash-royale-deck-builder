@@ -5,7 +5,7 @@ const battlelogSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        index: { expires: '86400' }  // This document will be deleted 24 hours after 'createdAt'
+        index: { expires: 30 }  // Ce document sera supprimé après 3 jours
     },
 });
 
