@@ -1,13 +1,8 @@
-//const MongoClient = require('mongodb').MongoClient;
 
-
-// Database Name
-//const dbName = 'tets';
-
-// Create a new MongoClient
-//const client = new MongoClient(process.env.MONGO_URI);
 const Battlelog = require("../models/battlelog.model");
 const Synergy = require("../models/cards.synergy.model");
+
+const DeckSynergy = require("../models/deck.synergy.model");
 
 const findDocument = async (playertag) => {
     try {
@@ -60,6 +55,14 @@ const findDocument = async (playertag) => {
         console.log(firstElements);
 
         const mergedList = [...favcards, ...firstElements];
+
+
+        const deckSynergy = new DeckSynergy({
+            tagname: playertag,
+            deck_synergy: mergedList
+        });
+
+        await deckSynergy.save();
 
         if (firstElements) {
             return mergedList;
