@@ -2,7 +2,6 @@ import FrostedHeader from "./components/FrostedHeader";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import BattleLog from "./pages/BattleLog";
-import DeckBuilder from "./pages/DeckBuilder";
 import { ChakraProvider } from "@chakra-ui/react";
 
 
@@ -15,7 +14,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/battle-log" element={<BattleLog />} />
-          <Route path="/deck-builder" element={<DeckBuilder />} />
        </Routes>
     </div>
     </ChakraProvider> 

@@ -4,12 +4,13 @@ import { Button,  } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { IoSearchOutline } from "react-icons/io5";
 import API from '../API-client';
-
+import ResultGrid from './ResultGrid';
 
 const MotionBox = motion(Box);
 
 const SearchInput = () => {
   const [inputValue, setInputValue] = useState<string>('');
+  const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames
 
   const HandleSearchBattleLog =() => {
     if (inputValue !== '') {
@@ -17,6 +18,19 @@ const SearchInput = () => {
       .getMostUsedDeck(inputValue)
       .then((response) => {
         console.log(response.data);
+        const playerTag = response.data.playerTag;
+        const playerName = response.data.playerName;
+        const elixir = response.data.elixir;
+        const count = response.data.count;
+        const cardNames = response.data.cards.map((card:any) => card.name);
+        // Create an object with the data we need
+        const resultData = {
+          playerName,
+          elixir,
+          count,
+          cardNames,
+        };
+        setResults(resultData); // Save the results in state
       })
       .catch((error) => {
         console.log(error);
@@ -38,7 +52,7 @@ const SearchInput = () => {
       }}
       className="my-8 max-w-6xl w-11/12 mx-auto sm:my-10 text-[2.5rem] font-bold text-center text-white"
     >
-      Search for battle logs
+      See your most used deck analysis
       <MotionBox
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -75,6 +89,7 @@ const SearchInput = () => {
           >
             Search
         </Button>
+        {results && <ResultGrid results={results} />} {/* Conditionally render the ResultGrid component with the results as a prop */} 
       </MotionBox>
     </MotionBox>
   );
