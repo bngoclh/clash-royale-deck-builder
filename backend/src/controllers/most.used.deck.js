@@ -63,7 +63,7 @@ const findMostUsedDeck = async (battles) => {
     // Structure the solo_cards with alternatives
     const soloCardsWithAlternatives = solo_cards.map((card) => ({
       card_name: card,
-      alternatives: cardProposals[card].filter(Boolean), // Filtrer les alternatives pour s'assurer qu'elles sont valides
+      alternatives: cardProposals[card],
     }));
 
     return {
@@ -105,7 +105,7 @@ const findMostUsedDeck = async (battles) => {
   // Structure the solo_cards with alternatives
   const soloCardsWithAlternatives = solo_cards.map((card) => ({
     card_name: card,
-    alternatives: cardProposals[card].filter(Boolean), // Filtrer les alternatives pour s'assurer qu'elles sont valides
+    alternatives: cardProposals[card],
   }));
 
   return {
@@ -140,10 +140,10 @@ const getSynergies = async (deck) => {
 
       if (synergyA && synergyB) {
         const cardBSynergy = synergyA.synergies.find(
-          (s) => s.card_slug === cardB.name
+          (s) => s.card_slug === cardB.name && !s.dimmed
         );
         const cardASynergy = synergyB.synergies.find(
-          (s) => s.card_slug === cardA.name
+          (s) => s.card_slug === cardA.name && !s.dimmed
         );
 
         if (cardBSynergy || cardASynergy) {
@@ -179,10 +179,10 @@ const soloCards = async (deck) => {
 
         if (synergyA && synergyB) {
           const cardBSynergy = synergyA.synergies.find(
-            (s) => s.card_slug === cardB.name
+            (s) => s.card_slug === cardB.name && !s.dimmed
           );
           const cardASynergy = synergyB.synergies.find(
-            (s) => s.card_slug === cardA.name
+            (s) => s.card_slug === cardA.name && !s.dimmed
           );
 
           if (cardBSynergy || cardASynergy) {
@@ -213,18 +213,14 @@ const getCardProposals = async (soloCards, usedDeck) => {
 
     for (const card of synergyData) {
       if (
-        card.synergies.filter((s) =>
-          usedDeck.map((c) => c.name).includes(s.card_slug)
-        ).length >= 4
+        card.synergies.filter(
+          (s) => usedDeck.map((c) => c.name).includes(s.card_slug) && !s.dimmed
+        ).length >= 4 &&
+        !usedDeck.map((c) => c.name).includes(card.name) // Vérifiez que la carte n'est pas déjà dans le deck utilisé
       ) {
         proposals[soloCard].push(card.name);
       }
     }
-
-    // Filtrer les alternatives pour enlever les valeurs indéfinies ou vides
-    proposals[soloCard] = proposals[soloCard].filter(
-      (alternative) => alternative
-    );
   }
 
   return proposals;
