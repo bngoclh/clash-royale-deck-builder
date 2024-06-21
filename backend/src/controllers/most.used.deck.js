@@ -4,6 +4,7 @@ const Synergy = require("../models/cards.synergy.model");
 // Fonction pour trouver le deck le plus utilisé
 const findMostUsedDeck = async (battles) => {
   const deckUsage = {}; // Dictionnaire pour compter l'utilisation de chaque deck
+  const numberOfBattles = battles.length; // Nombre total de batailles
 
   // Parcourt chaque bataille pour analyser les decks utilisés et les résultats des matchs
   battles.forEach((battle) => {
@@ -57,23 +58,24 @@ const findMostUsedDeck = async (battles) => {
     const deck = sortedDecks[0][1];
     const winRate = (deck.wins / (deck.wins + deck.losses)) * 100;
     const synergies = await getSynergies(deck.cards);
-    const solo_cards = await soloCards(deck.cards);
-    const cardProposals = await getCardProposals(solo_cards, deck.cards);
+    const soloCards = await getSoloCards(deck.cards);
+    const cardProposals = await getCardProposals(soloCards, deck.cards);
 
-    // Structure the solo_cards with alternatives
-    const soloCardsWithAlternatives = solo_cards.map((card) => ({
-      card_name: card,
+    // Structure the soloCards with alternatives
+    const soloCardsWithAlternatives = soloCards.map((card) => ({
+      cardName: card,
       alternatives: cardProposals[card],
     }));
 
     return {
+      numberOfBattles,
       mostUsedDeck: sortedDecks[0][0],
       elixir: deck.elixir,
       winRate: `${winRate.toFixed(2)}%`,
       count: deck.count,
       cards: deck.cards,
       synergies,
-      solo_cards: soloCardsWithAlternatives,
+      soloCards: soloCardsWithAlternatives,
     };
   }
 
@@ -99,29 +101,30 @@ const findMostUsedDeck = async (battles) => {
   const winRate =
     (bestDeck[1].wins / (bestDeck[1].wins + bestDeck[1].losses)) * 100;
   const synergies = await getSynergies(bestDeck[1].cards);
-  const solo_cards = await soloCards(bestDeck[1].cards);
-  const cardProposals = await getCardProposals(solo_cards, bestDeck[1].cards);
+  const soloCards = await getSoloCards(bestDeck[1].cards);
+  const cardProposals = await getCardProposals(soloCards, bestDeck[1].cards);
 
-  // Structure the solo_cards with alternatives
-  const soloCardsWithAlternatives = solo_cards.map((card) => ({
-    card_name: card,
+  // Structure the soloCards with alternatives
+  const soloCardsWithAlternatives = soloCards.map((card) => ({
+    cardName: card,
     alternatives: cardProposals[card],
   }));
 
   return {
+    numberOfBattles,
     mostUsedDeck: bestDeck[0],
     elixir: bestDeck[1].elixir,
     winRate: `${winRate.toFixed(2)}%`,
     count: bestDeck[1].count,
     cards: bestDeck[1].cards,
     synergies,
-    solo_cards: soloCardsWithAlternatives,
+    soloCards: soloCardsWithAlternatives,
   };
 };
 
 // Fonction pour obtenir les synergies
 const getSynergies = async (deck) => {
-  const synergies_list = [];
+  const synergiesList = [];
 
   // Cherche les données de synergies pour les cartes du deck
   const synergyData = await Synergy.find({
@@ -130,7 +133,7 @@ const getSynergies = async (deck) => {
 
   for (let i = 0; i < deck.length; i++) {
     const cardA = deck[i];
-    const cardSynergies = { card: cardA.name, synergies_list: [] };
+    const cardSynergies = { card: cardA.name, synergiesList: [] };
 
     for (let j = i + 1; j < deck.length; j++) {
       const cardB = deck[j];
@@ -147,18 +150,18 @@ const getSynergies = async (deck) => {
         );
 
         if (cardBSynergy || cardASynergy) {
-          cardSynergies.synergies_list.push(cardB.name);
+          cardSynergies.synergiesList.push(cardB.name);
         }
       }
     }
 
-    synergies_list.push(cardSynergies);
+    synergiesList.push(cardSynergies);
   }
 
-  return synergies_list;
+  return synergiesList;
 };
 
-const soloCards = async (deck) => {
+const getSoloCards = async (deck) => {
   const cardsWithoutSynergies = [];
 
   // Cherche les données de synergies pour les cartes du deck
@@ -237,9 +240,10 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
     elixir: mostUsedDeckData.elixir,
     winRate: mostUsedDeckData.winRate,
     count: mostUsedDeckData.count,
+    numberOfBattles: mostUsedDeckData.numberOfBattles,
     synergies: mostUsedDeckData.synergies,
-    solo_cards: mostUsedDeckData.solo_cards.map((card) => ({
-      card_name: card.card_name,
+    soloCards: mostUsedDeckData.soloCards.map((card) => ({
+      cardName: card.cardName,
       alternatives: card.alternatives.filter(Boolean),
     })),
   });

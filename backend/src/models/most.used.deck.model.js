@@ -8,15 +8,16 @@ const mostUsedDeckSchema = new mongoose.Schema({
   elixir: { type: Number, required: true },
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
+  numberOfBattles: { type: Number, required: true },
   synergies: [
     {
       card: { type: String, required: true },
-      synergies_list: [{ type: String, required: true }],
+      synergiesList: [{ type: String, required: true }],
     },
   ],
-  solo_cards: [
+  soloCards: [
     {
-      card_name: { type: String, required: true },
+      cardName: { type: String, required: true },
       alternatives: [{ type: String, required: true }],
     },
   ],
