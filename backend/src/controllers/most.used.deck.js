@@ -26,7 +26,12 @@ const findMostUsedDeck = async (battles) => {
       const averageElixir = elixirSum / deck.length;
 
       // Détermine si la bataille est une victoire
-      const victory = battle.team[0].crowns > battle.opponent[0].crowns;
+      let victory;
+      if (battle.team[0].trophyChange && battle.opponent[0].trophyChange) {
+        victory = battle.team[0].trophyChange > battle.opponent[0].trophyChange;
+      } else {
+        victory = battle.team[0].crowns > battle.opponent[0].crowns;
+      }
 
       // Si le deck n'a pas encore été rencontré, initialise ses valeurs
       if (!deckUsage[deckKey]) {
