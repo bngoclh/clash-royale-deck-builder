@@ -17,20 +17,22 @@ const SearchInput = () => {
       API  // call the getBattleLog function from the API-client.ts file 
       .getMostUsedDeck(inputValue)
       .then((response) => {
-        console.log(response.data);
-        const playerTag = response.data.playerTag;
+        // console.log(response.data);
         const playerName = response.data.playerName;
         const elixir = response.data.elixir;
         const count = response.data.count;
         const cardNames = response.data.cards.map((card:any) => card.name);
+        const winRate = response.data.winRate;
         // Create an object with the data we need
         const resultData = {
           playerName,
           elixir,
           count,
           cardNames,
+          winRate
         };
         setResults(resultData); // Save the results in state
+        // console.log(resultData.winRate);
       })
       .catch((error) => {
         console.log(error);
@@ -62,7 +64,7 @@ const SearchInput = () => {
           stiffness: 110,
           delay: 0.3,
         }}
-        className="flex flex-col items-center justify-center my-7 mx-20"
+        className="flex flex-col items-center justify-center my-7 mx-1" //chỉnh thụt lề trái phải ở đ
       >
         <InputGroup justifyContent={'center'} alignItems={'center'} display={'flex'} flexDirection={'column'} w={'100%'} maxW={'300px'} maxH={'20px'}>
             <Input
