@@ -10,8 +10,17 @@ const axiosInstance = axios.create({
   },
 });
 
+const postBattleLog = (playerTag: string) => {
+  const request = axios.post(`http://localhost:3000/api/deck/battledata/:playertag${playerTag}`, {
+    headers: {
+      Authorization: `Bearer ${config.API_KEY}`,
+    },
+  });
+  return request;
+}
+
 const getBattleLog = (playerTag: string) => {
-  const request = axios.post(`https://proxy.royaleapi.dev/v1/players/%23${playerTag}/battlelog`, {
+  const request = axios.get(`http://localhost:3000/api/deck/battledata/:playertag${playerTag}`, {
     headers: {
       Authorization: `Bearer ${config.API_KEY}`,
     },
@@ -28,4 +37,4 @@ const getMostUsedDeck = (playerTag: string) => {
   return request;
 }
 
-export default { axiosInstance, getBattleLog, getMostUsedDeck };
+export default { axiosInstance, postBattleLog, getBattleLog, getMostUsedDeck };

@@ -32,6 +32,16 @@ const SearchInput = () => {
           };
           setResults(resultData); // Save the results in state
           // console.log(resultData.winRate);
+
+          // Add your API.postBattleLog call here
+          API.postBattleLog(resultData)
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
         })
         .catch((error) => {
           console.log(error);

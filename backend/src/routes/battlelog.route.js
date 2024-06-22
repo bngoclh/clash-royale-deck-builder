@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getPlayerBattles } = require("../controllers/player.battlelog");
-const { pushBattleLog } = require("../controllers/player.battlelog");
+const { getPlayerBattles, pushBattleLog, getBattleLog } = require("../controllers/player.battlelog");
 
 
 // Route GET pour obtenir les données des batailles d'un joueur
@@ -36,7 +35,7 @@ router.get("/battledata/:playertag", async (req, res) => {
     }));
 
     res.json(battleData);
-    console.log(battleData);
+    // console.log(battleData);
   } catch (error) {
     console.error(
       `Error processing request for player ${playerTag}:`,
@@ -46,20 +45,29 @@ router.get("/battledata/:playertag", async (req, res) => {
   }
 });
 
-router.post("/battledata/:playertag", async (req, res) => {
+router.post("/battlelog/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
   const battles = await getPlayerBattles(playerTag);
   //const battleDataJson = JSON.stringify(battles);
   pushBattleLog(battles,playerTag);
 });
 
-// à modifier
-router.get("/battledata/:playertag", async (req, res) => {
+// Route GET pour obtenir les données des batailles d'un joueur
+router.get("/battlelog/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
-  const battles = await getPlayerBattles(playerTag);
-  //const battleDataJson = JSON.stringify(battles);
-  getBattleLog(battles,playerTag); //le getBattleLog n'existe pas encore jsp comment écrire
-});
 
+  try {
+    console.log(`Received request to get battle data for player ${playerTag}`);
+    const battles = await getBattleLog(playerTag);
+    res.json(battles);
+    // console.log(battles);
+  } catch (error) {
+    console.error(
+      `Error processing request for player ${playerTag}:`,
+      error.message
+    );
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const mostuseddeckroute = require("./src/routes/most.used.deck.route");
 const battlelog = require("./src/routes/battlelog.route");
 const favoritecards = require("./src/routes/synergie.cards.route");
-const fullbattlelog = require("./src/routes/get.battlelog.route");
 const connectDB = require("./src/config/db");
 const cors = require("cors"); // Add this line
 
@@ -17,8 +16,7 @@ app.use(bodyParser.json());
 connectDB();
 
 app.use("/api/deck", mostuseddeckroute);
-app.use("/api/player", battlelog);
+app.use("/api", battlelog);
 app.use("/api/synergie", favoritecards);
-app.use("/api", fullbattlelog);
 
 module.exports = app;
