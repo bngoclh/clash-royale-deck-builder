@@ -9,8 +9,17 @@ const mostUsedDeckSchema = new mongoose.Schema({
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
   date: { type: Date, default: Date.now },
+  top8OpponentCards: {
+    type: [
+      {
+        name: { type: String, required: true },
+        totalCount: { type: Number, required: true },
+        elixirCost: { type: Number, required: true},
+        rarity: { type: String,required: true },
+      }
+    ],
+    required: true
+  }
 });
 
 module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
-
-
