@@ -10,7 +10,8 @@ const MotionBox = motion(Box);
 
 const SearchInput = () => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames
+  const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames]
+  const [deckSynergyNames, setDeckSynergyNames] = useState(null);
 
   const HandleSearchBattleLog = () => {
     if (inputValue !== "") {
@@ -37,6 +38,16 @@ const SearchInput = () => {
           API.postBattleLog(inputValue)
           .then((response) => {
             console.log(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+          // Add API get favorite cards here
+          API.getFavoriteCards(inputValue)
+          .then((response) => {
+            const deckSynergyNames = response.data.deck_synergy.map((cardSyn: any) => cardSyn.name);
+            setDeckSynergyNames(deckSynergyNames); // Save the deck synergy names in state
           })
           .catch((error) => {
             console.log(error);
@@ -111,8 +122,8 @@ const SearchInput = () => {
         >
           Search
         </Button>
-        {results && <ResultGrid results={results} />}{" "}
-        {/* Conditionally render the ResultGrid component with the results as a prop */}
+        {results && <ResultGrid results={results} deckSynergyNames={deckSynergyNames} />}{" "}
+        {/* Conditionally render the ResultGrid component with the results and deckSynergyNames as a prop */}
       </MotionBox>
     </MotionBox>
   );

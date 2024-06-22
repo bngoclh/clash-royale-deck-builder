@@ -17,6 +17,6 @@ connectDB();
 
 app.use("/api/deck", mostuseddeckroute);
 app.use("/api", battlelog);
-app.use("/api/synergie", favoritecards);
+app.use("/api/synergy", favoritecards);
 
 module.exports = app;
