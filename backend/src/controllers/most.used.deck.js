@@ -42,7 +42,12 @@ const findMostUsedDeck = async (battles) => {
       const averageElixir = elixirSum / teamDeck.length;
 
       // Détermine si la bataille est une victoire
-      const victory = battle.team[0].crowns > battle.opponent[0].crowns;
+      let victory;
+      if (battle.team[0].trophyChange && battle.opponent[0].trophyChange) {
+        victory = battle.team[0].trophyChange > battle.opponent[0].trophyChange;
+      } else {
+        victory = battle.team[0].crowns > battle.opponent[0].crowns;
+      }
 
       // Si le deck n'a pas encore été rencontré, initialise ses valeurs
       if (!deckUsage[deckKey]) {
@@ -88,6 +93,10 @@ const findMostUsedDeck = async (battles) => {
     const deck = sortedDecks[0][1];
     const winRate = (deck.wins / (deck.wins + deck.losses)) * 100;
     const synergies = await getSynergies(deck.cards);
+
+    // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
+    const losingOpponents = findLosingOpponents(battles, sortedDecks[0][0]);
+
     return {
       mostUsedDeck: sortedDecks[0][0],
       elixir: deck.elixir,
@@ -95,8 +104,8 @@ const findMostUsedDeck = async (battles) => {
       count: deck.count,
       cards: deck.cards,
       synergies,
-      opponents: deck.opponents,
       top8OpponentCards,
+      losingOpponents,
     };
   }
 
@@ -109,7 +118,7 @@ const findMostUsedDeck = async (battles) => {
     return {
       message:
         "Le joueur utilise un deck différent pour chaque match. Il est recommandé de jouer avec plusieurs decks pour obtenir des statistiques plus significatives.",
-      top8OpponentCards,
+      // Assurez-vous que losingOpponents est défini même dans ce cas
     };
   }
 
@@ -122,6 +131,10 @@ const findMostUsedDeck = async (battles) => {
     const deck = mostUsedDecks[0][1];
     const winRate = (deck.wins / (deck.wins + deck.losses)) * 100;
     const synergies = await getSynergies(deck.cards);
+
+    // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
+    const losingOpponents = findLosingOpponents(battles, mostUsedDecks[0][0]);
+
     return {
       mostUsedDeck: mostUsedDecks[0][0],
       elixir: deck.elixir,
@@ -129,8 +142,8 @@ const findMostUsedDeck = async (battles) => {
       count: deck.count,
       cards: deck.cards,
       synergies,
-      opponents: deck.opponents,
       top8OpponentCards,
+      losingOpponents,
     };
   }
 
@@ -149,15 +162,18 @@ const findMostUsedDeck = async (battles) => {
     100;
   const synergies = await getSynergies(bestWinRateDeck[1].cards);
 
+  // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
+  const losingOpponents = findLosingOpponents(battles, bestDeck[0]);
+
   return {
-    mostUsedDeck: bestWinRateDeck[0],
-    elixir: bestWinRateDeck[1].elixir,
+    mostUsedDeck: bestDeck[0],
+    elixir: bestDeck[1].elixir,
     winRate: winRate.toFixed(2) + "%",
-    count: bestWinRateDeck[1].count,
-    cards: bestWinRateDeck[1].cards,
+    count: bestDeck[1].count,
+    cards: bestDeck[1].cards,
     synergies,
-    opponents: bestWinRateDeck[1].opponents,
     top8OpponentCards,
+    losingOpponents,
   };
 };
 
@@ -194,9 +210,6 @@ const findMostUsedOpponentCards = (battles) => {
   return top8OpponentCards;
 };
 
-
- 
-
 const getSynergies = async (deck) => {
   const synergies = {};
 
@@ -204,43 +217,89 @@ const getSynergies = async (deck) => {
     name: { $in: deck.map((card) => card.name) },
   });
 
-  for (let i = 0; i < deck.length; i++) {
-    const cardA = deck[i];
+  for (let cardA of deck) {
     synergies[cardA.name] = [];
-
-    for (let j = 0; j < deck.length; j++) {
-      if (i !== j) {
-        const cardB = deck[j];
-
+    for (let cardB of deck) {
+      if (cardA.name !== cardB.name) {
         try {
           const synergyA = allSynergies.find(
             (synergy) => synergy.name === cardA.name
           );
-          const synergyB = allSynergies.find(
+          const synergyB = synergyA.synergies.find(
             (synergy) => synergy.name === cardB.name
           );
 
-          if (synergyA && synergyB) {
-            const cardBSynergy = synergyA.synergies.find(
-              (synergy) => synergy.card_slug === cardB.name
-            );
-            const cardASynergy = synergyB.synergies.find(
-              (synergy) => synergy.card_slug === cardA.name
-            );
-
-            if (cardBSynergy || cardASynergy) {
-              synergies[cardA.name].push(cardB.name);
-            }
+          if (synergyB) {
+            synergies[cardA.name].push({
+              name: cardB.name,
+              elixirCost: cardB.elixirCost,
+              synergy: synergyB.synergy,
+            });
           }
         } catch (error) {
-          console.error("Error fetching synergies:", error);
+          console.error(
+            `Error while calculating synergy between ${cardA.name} and ${cardB.name}:`,
+            error.message
+          );
         }
       }
     }
   }
+
   return synergies;
 };
 
+
+
+//////////////////////////////////////
+const findLosingOpponents = (battles, mostUsedDeck) => {
+  const losingOpponents = [];
+
+  battles.forEach((battle) => {
+    // Ajout de journaux pour vérifier les données d'entrée
+    console.log("Battle data:", JSON.stringify(battle, null, 2));
+    
+    if (
+      battle.team &&
+      battle.team.length > 0 &&
+      battle.opponent &&
+      battle.opponent.length > 0
+    ) {
+      // Créez la représentation en chaîne du deck de l'équipe
+      const teamDeck = battle.team[0].cards
+        .map((card) => card.name)
+        .sort()
+        .join(",");
+      
+      console.log(`Comparing decks: Team Deck: ${teamDeck}, Most Used Deck: ${mostUsedDeck}`);
+      
+      if (
+        teamDeck === mostUsedDeck &&
+        battle.team[0].trophyChange < battle.opponent[0].trophyChange
+      ) {
+        const opponentDeck = battle.opponent[0].cards.map((card) => ({
+          name: card.name,
+          elixirCost: card.elixirCost,
+          rarity: card.rarity,
+        }));
+        console.log(`Adding losing opponent: ${battle.opponent[0].name}`);
+        losingOpponents.push({
+          opponentName: battle.opponent[0].name, // Ajout du nom de l'adversaire
+          opponentDeck: opponentDeck,
+        });
+      } else {
+        console.log("No match found for this battle.");
+      }
+    } else {
+      console.log("Invalid battle data: Missing team or opponent information.");
+    }
+  }); // Ici, vous avez oublié de fermer la fonction forEach
+
+  console.log("Losing opponents found:", JSON.stringify(losingOpponents, null, 2));
+  return losingOpponents;
+};
+
+///////////////////////////
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données
 const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
   console.log("Preparing to save most used deck:", mostUsedDeckData);
@@ -253,6 +312,7 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
     winRate: mostUsedDeckData.winRate,
     count: mostUsedDeckData.count,
     top8OpponentCards: mostUsedDeckData.top8OpponentCards,
+    losingOpponents: mostUsedDeckData.losingOpponents,
   });
   try {
     await mostUsedDeck.save();

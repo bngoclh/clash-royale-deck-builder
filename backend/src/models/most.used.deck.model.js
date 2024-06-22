@@ -14,12 +14,28 @@ const mostUsedDeckSchema = new mongoose.Schema({
       {
         name: { type: String, required: true },
         totalCount: { type: Number, required: true },
-        elixirCost: { type: Number, required: true},
-        rarity: { type: String,required: true },
-      }
+        elixirCost: { type: Number, required: true },
+        rarity: { type: String, required: true },
+      },
     ],
-    required: true
-  }
+    required: true,
+  },
+  losingOpponents: {
+    type: [
+      {
+        opponentName: { type: String, required: true },
+        opponentDeck: [
+          {
+            name: { type: String, required: true },
+            elixirCost: { type: Number, required: true },
+            rarity: { type: String },
+          },
+        ],
+      },
+    ],
+  },
 });
 
-module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
+const MostUsedDeck = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
+
+module.exports = MostUsedDeck;
