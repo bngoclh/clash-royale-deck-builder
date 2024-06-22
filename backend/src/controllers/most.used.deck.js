@@ -95,7 +95,7 @@ const findMostUsedDeck = async (battles) => {
     const synergies = await getSynergies(deck.cards);
 
     // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
-    const losingOpponents = findLosingOpponents(battles, sortedDecks[0][0]);
+    const WinningOpponents = findWinningOpponents(battles, sortedDecks[0][0]);
 
     return {
       mostUsedDeck: sortedDecks[0][0],
@@ -105,7 +105,7 @@ const findMostUsedDeck = async (battles) => {
       cards: deck.cards,
       synergies,
       top8OpponentCards,
-      losingOpponents,
+      WinningOpponents,
     };
   }
 
@@ -118,7 +118,7 @@ const findMostUsedDeck = async (battles) => {
     return {
       message:
         "Le joueur utilise un deck différent pour chaque match. Il est recommandé de jouer avec plusieurs decks pour obtenir des statistiques plus significatives.",
-      // Assurez-vous que losingOpponents est défini même dans ce cas
+      // Assurez-vous que WinningOpponents est défini même dans ce cas
     };
   }
 
@@ -133,7 +133,7 @@ const findMostUsedDeck = async (battles) => {
     const synergies = await getSynergies(deck.cards);
 
     // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
-    const losingOpponents = findLosingOpponents(battles, mostUsedDecks[0][0]);
+    const WinningOpponents = findWinningOpponents(battles, mostUsedDecks[0][0]);
 
     return {
       mostUsedDeck: mostUsedDecks[0][0],
@@ -143,7 +143,7 @@ const findMostUsedDeck = async (battles) => {
       cards: deck.cards,
       synergies,
       top8OpponentCards,
-      losingOpponents,
+      WinningOpponents,
     };
   }
 
@@ -163,7 +163,7 @@ const findMostUsedDeck = async (battles) => {
   const synergies = await getSynergies(bestWinRateDeck[1].cards);
 
   // Appel de la fonction pour trouver les adversaires ayant gagné contre le deck le plus utilisé
-  const losingOpponents = findLosingOpponents(battles, bestDeck[0]);
+  const WinningOpponents = findWinningOpponents(battles, bestDeck[0]);
 
   return {
     mostUsedDeck: bestDeck[0],
@@ -173,7 +173,7 @@ const findMostUsedDeck = async (battles) => {
     cards: bestDeck[1].cards,
     synergies,
     top8OpponentCards,
-    losingOpponents,
+    WinningOpponents,
   };
 };
 
@@ -252,8 +252,8 @@ const getSynergies = async (deck) => {
 
 
 //////////////////////////////////////
-const findLosingOpponents = (battles, mostUsedDeck) => {
-  const losingOpponents = [];
+const findWinningOpponents = (battles, mostUsedDeck) => {
+  const WinningOpponents = [];
 
   battles.forEach((battle) => {
     // Ajout de journaux pour vérifier les données d'entrée
@@ -283,7 +283,7 @@ const findLosingOpponents = (battles, mostUsedDeck) => {
           rarity: card.rarity,
         }));
         console.log(`Adding losing opponent: ${battle.opponent[0].name}`);
-        losingOpponents.push({
+        WinningOpponents.push({
           opponentName: battle.opponent[0].name, // Ajout du nom de l'adversaire
           opponentDeck: opponentDeck,
         });
@@ -295,8 +295,8 @@ const findLosingOpponents = (battles, mostUsedDeck) => {
     }
   }); // Ici, vous avez oublié de fermer la fonction forEach
 
-  console.log("Losing opponents found:", JSON.stringify(losingOpponents, null, 2));
-  return losingOpponents;
+  console.log("Losing opponents found:", JSON.stringify(WinningOpponents, null, 2));
+  return WinningOpponents;
 };
 
 ///////////////////////////
@@ -312,7 +312,7 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
     winRate: mostUsedDeckData.winRate,
     count: mostUsedDeckData.count,
     top8OpponentCards: mostUsedDeckData.top8OpponentCards,
-    losingOpponents: mostUsedDeckData.losingOpponents,
+    WinningOpponents: mostUsedDeckData.WinningOpponents,
   });
   try {
     await mostUsedDeck.save();

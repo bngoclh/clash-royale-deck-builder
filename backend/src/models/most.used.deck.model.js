@@ -20,7 +20,7 @@ const mostUsedDeckSchema = new mongoose.Schema({
     ],
     required: true,
   },
-  losingOpponents: {
+  WinningOpponents: {
     type: [
       {
         opponentName: { type: String, required: true },
