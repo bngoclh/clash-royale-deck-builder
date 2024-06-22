@@ -9,6 +9,12 @@ const mostUsedDeckSchema = new mongoose.Schema({
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
   date: { type: Date, default: Date.now },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: { expires: 86000 }  // Ce document sera supprimé après 3 jours
+},
 });
 
 module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
