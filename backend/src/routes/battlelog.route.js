@@ -46,12 +46,20 @@ router.get("/battledata/:playertag", async (req, res) => {
   }
 });
 
-router.post("/pushbattledata/:playertag", async (req, res) => {
+router.post("/battledata/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
   const battles = await getPlayerBattles(playerTag);
   //const battleDataJson = JSON.stringify(battles);
   pushBattleLog(battles,playerTag);
-
 });
+
+// à modifier
+router.get("/battledata/:playertag", async (req, res) => {
+  const playerTag = req.params.playertag;
+  const battles = await getPlayerBattles(playerTag);
+  //const battleDataJson = JSON.stringify(battles);
+  getBattleLog(battles,playerTag); //le getBattleLog n'existe pas encore jsp comment écrire
+});
+
 
 module.exports = router;

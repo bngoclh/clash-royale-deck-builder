@@ -22,5 +22,9 @@ const pushBattleLog = async (battlelog,playerTag) =>{
   }
 }
 
+// create const getBattleLog
+
+
+
 
 module.exports = { getPlayerBattles, pushBattleLog};
