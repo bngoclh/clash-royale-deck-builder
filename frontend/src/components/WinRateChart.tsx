@@ -1,24 +1,4 @@
-// // src/components/PieChart.tsx
-// import { VictoryPie } from 'victory';
 
-// const PieChart = ({ winRate } : {winRate: number}) => {
-//     const data = [
-//         { x: "Win", y: winRate, label: `${winRate}%`},
-//         { x: "Lose", y: 100 - winRate, label: `${100 - winRate}`}
-//     ];
-
-//     return (
-//         <VictoryPie
-//             data={data}
-//             colorScale={["white", "yellow"]}
-//             labels={({ datum }) => datum.label}
-//         />
-//     );
-// };
-
-// export default PieChart;
-
-// src/components/CustomPieChart.tsx
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 

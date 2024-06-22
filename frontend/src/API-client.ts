@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 });
 
 const postBattleLog = (playerTag: string) => {
-  const request = axios.post(`http://localhost:3000/api/deck/battledata/:playertag${playerTag}`, {
+  const request = axios.post(`http://localhost:3000/api/battlelog/${playerTag}`, {
     headers: {
       Authorization: `Bearer ${config.API_KEY}`,
     },
@@ -20,7 +20,7 @@ const postBattleLog = (playerTag: string) => {
 }
 
 const getBattleLog = (playerTag: string) => {
-  const request = axios.get(`http://localhost:3000/api/deck/battledata/:playertag${playerTag}`, {
+  const request = axios.get(`http://localhost:3000/api/deck/battledata/${playerTag}`, {
     headers: {
       Authorization: `Bearer ${config.API_KEY}`,
     },

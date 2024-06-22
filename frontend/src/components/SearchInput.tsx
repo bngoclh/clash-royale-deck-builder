@@ -34,7 +34,7 @@ const SearchInput = () => {
           // console.log(resultData.winRate);
 
           // Add your API.postBattleLog call here
-          API.postBattleLog(resultData)
+          API.postBattleLog(inputValue)
           .then((response) => {
             console.log(response.data);
           })

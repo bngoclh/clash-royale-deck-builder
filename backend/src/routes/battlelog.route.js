@@ -35,7 +35,7 @@ router.get("/battledata/:playertag", async (req, res) => {
     }));
 
     res.json(battleData);
-    // console.log(battleData);
+    console.log(battleData);
   } catch (error) {
     console.error(
       `Error processing request for player ${playerTag}:`,
@@ -48,19 +48,18 @@ router.get("/battledata/:playertag", async (req, res) => {
 router.post("/battlelog/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
   const battles = await getPlayerBattles(playerTag);
-  //const battleDataJson = JSON.stringify(battles);
+  // const battleDataJson = JSON.stringify(battles);
   pushBattleLog(battles,playerTag);
 });
 
 // Route GET pour obtenir les données des batailles d'un joueur
 router.get("/battlelog/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
-
   try {
     console.log(`Received request to get battle data for player ${playerTag}`);
     const battles = await getBattleLog(playerTag);
     res.json(battles);
-    // console.log(battles);
+    console.log(battles);
   } catch (error) {
     console.error(
       `Error processing request for player ${playerTag}:`,
