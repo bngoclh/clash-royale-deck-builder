@@ -46,7 +46,8 @@ const SearchInput = () => {
           // Add API get favorite cards here
           API.getFavoriteCards(inputValue)
           .then((response) => {
-            const deckSynergyNames = response.data.deck_synergy.map((cardSyn: any) => cardSyn.name);
+            console.log(response.data);
+            const deckSynergyNames = response.data; // ko cần data.map ở đây
             setDeckSynergyNames(deckSynergyNames); // Save the deck synergy names in state
           })
           .catch((error) => {

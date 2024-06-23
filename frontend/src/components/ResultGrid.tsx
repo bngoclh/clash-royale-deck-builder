@@ -1,18 +1,27 @@
 // Trong file ResultGrid.tsx
 import { Grid } from "@chakra-ui/react";
 import WinPieChart from "./WinRateChart";
+import { useState, useEffect } from "react";
 
 const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNames: any }) => {
   // Destructure the results object to get the data
   const { playerName, elixir, count, cardNames, winRate } = results;
-  const { cardSynNames = deckSynergyNames ? deckSynergyNames : [] } = deckSynergyNames; // Destructure the deckSynergyNames object to get the data
-  console.log(cardSynNames); // use an empty array as a fallback if deckSynergyNames is undefined
+  const [ cardSynNames, setCardSynNames ] = useState([]); // useState là 1 mảng chứa 2 giá trị nên phải const [] chứ ko phải {}
+
+  useEffect(() => {
+    if (deckSynergyNames) {
+      setCardSynNames(deckSynergyNames);
+      console.log(deckSynergyNames);
+    }
+  }, [deckSynergyNames]);
+
+  // const cardSynNames  = deckSynergyNames ? deckSynergyNames : []// Check if deckSynergyNames is defined before using it
 
   return (
     <>
       <h1 className="text-2xl text-white mt-6">Player Name: {playerName}</h1>
 
-      <nav className="grid grid-cols-2 gap-2 mx-1 mt-10">
+      <nav className="grid grid-cols-2 gap-12 mx-1 mt-10">
         {" "}
         {/* Khoảng trống giữa 2 cột */}
         <div>
@@ -32,7 +41,7 @@ const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNa
 
           <h2 className="text-2xl font-bold text-left text-white mt-6">Recommended deck with your 3 favorite cards</h2>
           <Grid templateColumns="repeat(4, 1fr)" gap={2}>
-            {cardSynNames && cardSynNames.map((cardSynName: any) => ( // Check if cardSynNames is defined before mapping over it
+            {cardSynNames.map((cardSynName: any) => ( // Check if cardSynNames is defined before mapping over it
               <div>
                 <img src={`/${cardSynName}.png`} alt={cardSynName} />
               </div>
