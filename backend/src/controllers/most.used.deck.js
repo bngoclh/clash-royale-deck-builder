@@ -5,6 +5,7 @@ const Synergy = require("../models/cards.synergy.model");
 const findMostUsedDeck = async (battles) => {
   const deckUsage = {}; // Dictionnaire pour compter l'utilisation de chaque deck
   const numberOfBattles = battles.length; // Nombre total de batailles
+  const trophyChanges = {}; // Dictionnaire pour stocker les trophyChange pour chaque deck
 
   // Parcourt chaque bataille pour analyser les decks utilisés et les résultats des matchs
   battles.forEach((battle) => {
@@ -41,11 +42,20 @@ const findMostUsedDeck = async (battles) => {
           wins: 0,
           losses: 0,
           cards: deck,
+          trophyChanges: [], // Initialise le tableau des trophyChanges
         };
       }
 
       // Incrémente le compteur d'utilisation pour ce deck
       deckUsage[deckKey].count += 1;
+
+      // Ajoute le trophyChange à la liste des trophyChanges
+      if (battle.team[0].trophyChange) {
+        deckUsage[deckKey].trophyChanges.push(battle.team[0].trophyChange);
+      } else {
+        deckUsage[deckKey].trophyChanges.push(0); // Si trophyChange n'est pas disponible, ajoutez 0 ou une valeur par défaut
+      }
+
       if (victory) {
         deckUsage[deckKey].wins += 1;
       } else {
@@ -79,6 +89,7 @@ const findMostUsedDeck = async (battles) => {
       winRate: `${winRate.toFixed(2)}%`,
       count: deck.count,
       cards: deck.cards,
+      trophyChanges: deck.trophyChanges, // Inclure les trophyChanges
       synergies,
       soloCards: soloCardsWithAlternatives,
     };
@@ -122,6 +133,7 @@ const findMostUsedDeck = async (battles) => {
     winRate: `${winRate.toFixed(2)}%`,
     count: bestDeck[1].count,
     cards: bestDeck[1].cards,
+    trophyChanges: bestDeck[1].trophyChanges,
     synergies,
     soloCards: soloCardsWithAlternatives,
   };
@@ -246,6 +258,7 @@ const saveMostUsedDeck = async (playertag, playerName, mostUsedDeckData) => {
     winRate: mostUsedDeckData.winRate,
     count: mostUsedDeckData.count,
     numberOfBattles: mostUsedDeckData.numberOfBattles,
+    trophyChanges: mostUsedDeckData.trophyChanges,
     synergies: mostUsedDeckData.synergies,
     soloCards: mostUsedDeckData.soloCards.map((card) => ({
       cardName: card.cardName,

@@ -8,7 +8,7 @@ const {
 } = require("../controllers/most.used.deck");
 
 // Route GET pour obtenir le deck le plus utilisé par un joueur
-router.get("/mostuseddeck/:playertag", async (req, res) => {
+router.get("/getmostuseddeck/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
 
   try {
