@@ -8,7 +8,7 @@ const mostUsedDeckSchema = new mongoose.Schema({
   elixir: { type: Number, required: true },
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
-  date: { type: Date, default: Date.now },
+  numberOfBattles: { type: Number, required: true },
   top8OpponentCards: {
     type: [
       {
@@ -33,9 +33,20 @@ const mostUsedDeckSchema = new mongoose.Schema({
         ],
       },
     ],
+    synergies: [
+      {
+        card: { type: String, required: true },
+        synergiesList: [{ type: String, required: true }],
+      },
+    ],
+    soloCards: [
+      {
+        cardName: { type: String, required: true },
+        alternatives: [{ type: String, required: true }],
+      },
+    ],
+    date: { type: Date, default: Date.now },
   },
 });
 
-const MostUsedDeck = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
-
-module.exports = MostUsedDeck;
+module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);

@@ -3,7 +3,6 @@ const router = express.Router();
 const { getPlayerBattles } = require("../controllers/player.battlelog");
 const { pushBattleLog } = require("../controllers/player.battlelog");
 
-
 // Route GET pour obtenir les données des batailles d'un joueur
 router.get("/battledata/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
@@ -14,7 +13,9 @@ router.get("/battledata/:playertag", async (req, res) => {
 
     const battleData = battles.map((battle) => ({
       result:
-        battle.team[0].crowns > battle.opponent[0].crowns ? "Win" : "Loss",
+        battle.team[0].trophyChange > battle.opponent[0].trophyChange
+          ? "Win"
+          : "Loss",
       playerDeck: battle.team[0].cards.map((card) => card.name),
       opponentDeck: battle.opponent[0].cards.map((card) => card.name),
       playerElixirCost: (
@@ -50,8 +51,7 @@ router.post("/pushbattledata/:playertag", async (req, res) => {
   const playerTag = req.params.playertag;
   const battles = await getPlayerBattles(playerTag);
   //const battleDataJson = JSON.stringify(battles);
-  pushBattleLog(battles,playerTag);
-
+  pushBattleLog(battles, playerTag);
 });
 
 module.exports = router;
