@@ -24,7 +24,7 @@ router.get("/getmostuseddeck/:playertag", async (req, res) => {
     const battles = await getPlayerBattles(playerTag);
     console.log(`Analyzing decks for player ${playerTag}`);
 
-    const result = findMostUsedDeck(battles);
+    const result = await findMostUsedDeck(battles);
     await saveMostUsedDeck(playerTag, playerName, result);
     res.json({ playerName, ...result });
   } catch (error) {

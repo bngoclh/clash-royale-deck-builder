@@ -1,11 +1,9 @@
-
-import { Pie } from "react-chartjs-2";
+import { Pie, TooltipItem } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
 const WinPieChart = ({ winRate }: { winRate: string }) => {
-  // Enlever le signe de pourcentage et convertir winRate en nombre
   const winRateNumber = parseFloat(winRate.replace("%", ""));
 
   const windata = {
@@ -14,31 +12,39 @@ const WinPieChart = ({ winRate }: { winRate: string }) => {
       {
         label: "Win Rate",
         data: [winRateNumber, 100 - winRateNumber],
-        backgroundColor: ["#0088FE", "#FF8042"],
-        hoverBackgroundColor: ["#005f9e", "#ff6f42"],
+        backgroundColor: ["#720e9e", "#ffffff"],
+        hoverBackgroundColor: ["#9b38d1", "#f2f2f2"],
+        borderColor: "#dbd8e3",
       },
     ],
   };
 
   const options = {
-    // responsive: true,
-    // plugins: {
-    // legend: {
-    //     position: 'top',
-    // },
-    // tooltip: {
-    //     callbacks: {
-    //     label: function (context: any) {
-    //         const label = context.label || '';
-    //         const value = context.raw || 0;
-    //         return `${label}: ${value}%`;
-    //     },
-    //     },
-    // },
-    // },
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context: TooltipItem<"pie">) {
+            const labelIndex = context.dataIndex;
+            const labelName = context.chart.data.labels![labelIndex];
+            const value = context.chart.data.datasets![0].data![labelIndex];
+            return `${
+              labelName === "Lose" ? "Lose Rate" : "Win Rate"
+            }: ${value}%`;
+          },
+        },
+      },
+      legend: {
+        labels: {
+          color: "white",
+          font: {
+            size: 18,
+          },
+        },
+      },
+    },
   };
 
-  // return the pie chart and options above
   return <Pie data={windata} options={options} />;
 };
 

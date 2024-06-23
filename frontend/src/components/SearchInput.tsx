@@ -22,6 +22,12 @@ const SearchInput = () => {
           const count = response.data.count;
           const cardNames = response.data.cards.map((card: any) => card.name);
           const winRate = response.data.winRate;
+          const trophyChanges = response.data.trophyChanges;
+          const numberOfBattles = response.data.numberOfBattles;
+          const soloCards = response.data.soloCards.map((card: any) => ({
+            cardName: card.cardName,
+            alternatives: card.alternatives,
+          }));
           // Create an object with the data we need
           const resultData = {
             playerName,
@@ -29,19 +35,22 @@ const SearchInput = () => {
             count,
             cardNames,
             winRate,
+            trophyChanges,
+            numberOfBattles,
+            soloCards,
           };
           setResults(resultData); // Save the results in state
           // console.log(resultData.winRate);
+          console.log(resultData.soloCards);
 
           // Add your API.postBattleLog call here
           API.postBattleLog(inputValue)
-          .then((response) => {
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-
+            .then((response) => {
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
