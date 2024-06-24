@@ -228,34 +228,27 @@ const findWinningOpponents = (battles, mostUsedDeck) => {
 
       if (
         teamDeck === mostUsedDeck &&
-        battle.team[0].trophyChange < battle.opponent[0].trophyChange
+        ((battle.team[0].trophyChange && battle.team[0].trophyChange < 0) ||
+          (!battle.team[0].trophyChange &&
+            battle.team[0].crowns < battle.opponent[0].crowns))
       ) {
         const opponentDeck = battle.opponent[0].cards.map((card) => ({
           name: card.name,
           elixirCost: card.elixirCost,
           rarity: card.rarity,
         }));
-        console.log(`Adding losing opponent: ${battle.opponent[0].name}`);
-        WinningOpponents.push({
-          opponentName: battle.opponent[0].name, // Ajout du nom de l'adversaire
-          opponentDeck: opponentDeck,
-        });
-      } else {
-        console.log("No match found for this battle.");
-      }
-    } else {
-      console.log("Invalid battle data: Missing team or opponent information.");
-    }
-  }); // Ici, vous avez oublié de fermer la fonction forEach
 
-  console.log(
-    "Losing opponents found:",
-    JSON.stringify(WinningOpponents, null, 2)
-  );
+        // Ajoutez des journaux pour vérifier les decks opposants gagnants
+        console.log("Winning Opponent Deck:", opponentDeck);
+
+        WinningOpponents.push(opponentDeck);
+      }
+    }
+  });
+
   return WinningOpponents;
 };
 
-// Fonction pour obtenir les synergies
 const getSynergies = async (deck) => {
   const synergiesList = [];
 
@@ -268,30 +261,29 @@ const getSynergies = async (deck) => {
     const cardA = deck[i];
     const cardSynergies = { card: cardA.name, synergiesList: [] };
 
-    for (let j = i + 1; j < deck.length; j++) {
-      const cardB = deck[j];
-
-      const synergyA = synergyData.find((s) => s.name === cardA.name);
-      const synergyB = synergyData.find((s) => s.name === cardB.name);
-
-      if (synergyA && synergyB) {
-        const cardBSynergy = synergyA.synergies.find(
-          (s) => s.card_slug === cardB.name && !s.dimmed
-        );
-        const cardASynergy = synergyB.synergies.find(
-          (s) => s.card_slug === cardA.name && !s.dimmed
-        );
-
-        if (cardBSynergy || cardASynergy) {
+    for (let j = 0; j < deck.length; j++) {
+      if (i !== j) {
+        const cardB = deck[j];
+        if (checkSynergy(cardA, cardB, synergyData)) {
           cardSynergies.synergiesList.push(cardB.name);
         }
       }
     }
-
     synergiesList.push(cardSynergies);
   }
 
   return synergiesList;
+};
+
+const checkSynergy = (cardA, cardB, synergyData) => {
+  const cardASynergyData = synergyData.find((s) => s.name === cardA.name);
+  if (cardASynergyData) {
+    const hasSynergy = cardASynergyData.synergies.some(
+      (s) => s.card_slug === cardB.name
+    );
+    return hasSynergy;
+  }
+  return false;
 };
 
 const getSoloCards = async (deck) => {
@@ -309,22 +301,9 @@ const getSoloCards = async (deck) => {
     for (let j = 0; j < deck.length; j++) {
       if (i !== j) {
         const cardB = deck[j];
-
-        const synergyA = synergyData.find((s) => s.name === cardA.name);
-        const synergyB = synergyData.find((s) => s.name === cardB.name);
-
-        if (synergyA && synergyB) {
-          const cardBSynergy = synergyA.synergies.find(
-            (s) => s.card_slug === cardB.name && !s.dimmed
-          );
-          const cardASynergy = synergyB.synergies.find(
-            (s) => s.card_slug === cardA.name && !s.dimmed
-          );
-
-          if (cardBSynergy || cardASynergy) {
-            hasSynergy = true;
-            break;
-          }
+        if (checkSynergy(cardA, cardB, synergyData)) {
+          hasSynergy = true;
+          break;
         }
       }
     }
@@ -337,29 +316,29 @@ const getSoloCards = async (deck) => {
   return cardsWithoutSynergies;
 };
 
-// Fonction pour proposer des cartes en fonction des synergies
-const getCardProposals = async (soloCards, usedDeck) => {
-  const proposals = {};
+// Exemple de fonction pour obtenir des propositions de cartes
+const getCardProposals = async (soloCards, deck) => {
+  const cardProposals = {};
 
-  // Cherche les données de synergies pour toutes les cartes
-  const synergyData = await Synergy.find();
+  for (const card of soloCards) {
+    // Pour chaque carte sans synergie, obtenir des propositions de cartes alternatives
+    const proposals = await Synergy.find({
+      name: card,
+    });
 
-  for (const soloCard of soloCards) {
-    proposals[soloCard] = [];
+    // Exclure les cartes déjà présentes dans le deck
+    const alternativeCards = proposals
+      .filter(
+        (proposal) =>
+          !deck.some((deckCard) => deckCard.name === proposal.card_slug) &&
+          !proposal.dimmed
+      )
+      .map((proposal) => proposal.card_slug);
 
-    for (const card of synergyData) {
-      if (
-        card.synergies.filter(
-          (s) => usedDeck.map((c) => c.name).includes(s.card_slug) && !s.dimmed
-        ).length >= 4 &&
-        !usedDeck.map((c) => c.name).includes(card.name) // Vérifiez que la carte n'est pas déjà dans le deck utilisé
-      ) {
-        proposals[soloCard].push(card.name);
-      }
-    }
+    cardProposals[card] = alternativeCards;
   }
 
-  return proposals;
+  return cardProposals;
 };
 
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données
