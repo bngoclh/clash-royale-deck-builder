@@ -25,9 +25,6 @@ const FrostedHeader = () => {
             <Link to="/battle-log" className={activePath === '/battle-log' ? "text-purple-500 text-xl hover:text-purple-500 transition duration-100" : "text-white text-xl hover:text-purple-500 transition duration-100"}>
               Battle Log
             </Link>
-            <Link to="/deck-builder" className={activePath === '/deck-builder' ? "text-purple-500 text-xl hover:text-purple-500 transition duration-100" : "text-white text-xl hover:text-purple-500 transition duration-100"}>
-              Deck Builder
-            </Link>
           </div>
         </div>
       </nav>

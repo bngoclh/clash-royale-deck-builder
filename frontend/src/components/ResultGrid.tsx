@@ -1,8 +1,9 @@
-import { Grid } from "@chakra-ui/react";
+import { Grid, Tooltip } from "@chakra-ui/react";
 import WinPieChart from "./WinRateChart";
 import TrophyChangeLineChart from "./TrophyChangeChart";
 import SoloCards from "./SoloCards";
 import WinningOpponents from "./WinningOpponents";
+import Top8OpponentCards from "./Top8OpponentCards";
 import { useEffect, useState } from "react";
 
 const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNames: any }) => {
@@ -16,6 +17,7 @@ const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNa
     numberOfBattles,
     soloCards,
     winningOpponents,
+    top8OpponentCards,
   } = results;
 
   const [cardSynNames, setCardSynNames] = useState([]); // useState là 1 mảng chứa 2 giá trị nên phải const [] chứ ko phải {}
@@ -38,9 +40,11 @@ const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNa
         <div className="font-normal text-base">
           <Grid templateColumns="repeat(4, 1fr)" gap={2}>
             {cardNames.map((cardName: any) => (
-              <div key={cardName}>
-                <img src={`/${cardName}.png`} alt={cardName} />
-              </div>
+              <Tooltip key={cardName} label={cardName}>
+                <div key={cardName}>
+                  <img src={`/${cardName}.png`} alt={cardName} />
+                </div>
+              </Tooltip>
             ))}
           </Grid>
           <p className="mt-5 text-left text-lg">
@@ -59,13 +63,16 @@ const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNa
 
       <Grid templateColumns="repeat(4, 1fr)" gap={2} className="w-1/2 h-1/2 mt-8 mb-5 justify-center">
         {cardSynNames.map((cardSynName: any) => (
-          <div key={cardSynName}>
-            <img src={`/${cardSynName}.png`} alt={cardSynName} />
-          </div>
+          <Tooltip key={cardSynName} label={cardSynName}>
+            <div key={cardSynName}>
+              <img src={`/${cardSynName}.png`} alt={cardSynName} />
+            </div>
+          </Tooltip>
         ))}
       </Grid>
 
       <SoloCards soloCards={soloCards} />
+      <Top8OpponentCards top8OpponentCards={top8OpponentCards} />
       <WinningOpponents winningOpponents={winningOpponents} />
     </>
   );

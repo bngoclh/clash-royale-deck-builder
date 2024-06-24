@@ -1,4 +1,4 @@
-import { Box, Text, Image, Grid } from "@chakra-ui/react";
+import { Box, Text, Image, Grid, Tooltip } from "@chakra-ui/react";
 
 interface SoloCardProps {
   soloCards: {
@@ -31,20 +31,23 @@ const SoloCards = ({ soloCards }: SoloCardProps) => {
         the others!
       </Text>
 
-      <Grid templateColumns={["1fr", "1fr 1fr"]} gap={4} mt={6}>
+      {/* <Grid templateColumns={["1fr", "1fr 1fr"]} gap={10} mt={6}> */}
+      <Grid className="grid grid-cols-1 gap-10 mt-6 sm:grid-cols-2">
         <Box>
           <Text className="text-lg text-white mt-5 mb-5">
             You might want to replace these cards:
           </Text>
           <Grid templateColumns="repeat(4, 1fr)" gap={2}>
             {soloCards.map((card) => (
-              <Box key={card.cardName}>
-                <Image
-                  boxSize={["75px", "100px", "150px"]}
-                  src={`/${card.cardName}.png`}
-                  alt={card.cardName}
-                />
-              </Box>
+              <Tooltip key={card.cardName} label={card.cardName}>
+                <Box key={card.cardName}>
+                  <Image
+                    boxSize={["75px", "100px", "150px"]}
+                    src={`/${card.cardName}.png`}
+                    alt={card.cardName}
+                  />
+                </Box>
+              </Tooltip>
             ))}
           </Grid>
         </Box>
@@ -55,13 +58,15 @@ const SoloCards = ({ soloCards }: SoloCardProps) => {
             </Text>
             <Grid templateColumns="repeat(4, 1fr)" gap={2}>
               {firstCard.alternatives.map((alt) => (
-                <Box key={alt}>
-                  <Image
-                    boxSize={["75px", "100px", "150px"]}
-                    src={`/${alt}.png`}
-                    alt={alt}
-                  />
-                </Box>
+                <Tooltip key={alt} label={alt}>
+                  <Box key={alt}>
+                    <Image
+                      boxSize={["75px", "100px", "150px"]}
+                      src={`/${alt}.png`}
+                      alt={alt}
+                    />
+                  </Box>
+                </Tooltip>
               ))}
             </Grid>
           </Box>

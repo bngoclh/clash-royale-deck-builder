@@ -317,29 +317,31 @@ const getSoloCards = async (deck) => {
   return cardsWithoutSynergies;
 };
 
-// Exemple de fonction pour obtenir des propositions de cartes
-const getCardProposals = async (soloCards, deck) => {
-  const cardProposals = {};
+const getCardProposals = async (soloCards, usedDeck) => {
+  const proposals = {};
 
-  for (const card of soloCards) {
-    // Pour chaque carte sans synergie, obtenir des propositions de cartes alternatives
-    const proposals = await Synergy.find({
-      name: card,
-    });
+  // Cherche les données de synergies pour toutes les cartes
+  const synergyData = await Synergy.find();
 
-    // Exclure les cartes déjà présentes dans le deck
-    const alternativeCards = proposals
-      .filter(
-        (proposal) =>
-          !deck.some((deckCard) => deckCard.name === proposal.card_slug) &&
-          !proposal.dimmed
-      )
-      .map((proposal) => proposal.card_slug);
+  for (const soloCard of soloCards) {
+    proposals[soloCard] = [];
 
-    cardProposals[card] = alternativeCards;
+    for (const card of synergyData) {
+      // Vérifie que la carte a des synergies avec au moins 4 cartes du deck et n'est pas déjà dans le deck
+      const synergyCount = card.synergies.filter(
+        (s) => usedDeck.map((c) => c.name).includes(s.card_slug) && !s.dimmed
+      ).length;
+
+      if (
+        synergyCount >= 4 &&
+        !usedDeck.map((c) => c.name).includes(card.name)
+      ) {
+        proposals[soloCard].push(card.name);
+      }
+    }
   }
 
-  return cardProposals;
+  return proposals;
 };
 
 // Fonction pour sauvegarder le deck le plus utilisé dans la base de données

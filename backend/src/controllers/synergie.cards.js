@@ -1,15 +1,22 @@
-
 const Battlelog = require("../models/battlelog.model");
 const Synergy = require("../models/cards.synergy.model");
 
 const DeckSynergy = require("../models/deck.synergy.model");
 
+
+const { getPlayerBattles } = require("../controllers/player.battlelog");
+
+
 const findDocument = async (playertag) => {
     try {
-
-
+/*
         const reccupbattle = await Battlelog.find({ battleId: playertag }).select('battlelog');
         const listbattle = reccupbattle[0].battlelog;
+*/
+        const listbattle = await getPlayerBattles(playertag);
+        //const listbattle = battlog.battlelog;
+
+        //console.log("liste de battlelog", listbattle)
 
         const listecards = listbattle.map((battle) => battle.team[0].cards.map((card) => card.name));
 

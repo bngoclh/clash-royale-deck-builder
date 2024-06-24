@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Input, InputGroup } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -12,6 +12,7 @@ const SearchInput = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames
   const [deckSynergyNames, setDeckSynergyNames] = useState(null);
+  // const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   const HandleSearchBattleLog = () => {
     if (inputValue !== "") {
@@ -39,6 +40,16 @@ const SearchInput = () => {
               })),
             })
           );
+
+          const top8OpponentCards = response.data.top8OpponentCards.map(
+            (card: any) => ({
+              name: card.name,
+              totalCount: card.totalCount,
+              elixirCost: card.elixirCost,
+              rarity: card.rarity,
+            })
+          );
+
           // Create an object with the data we need
           const resultData = {
             playerName,
@@ -50,10 +61,12 @@ const SearchInput = () => {
             numberOfBattles,
             soloCards,
             winningOpponents,
+            top8OpponentCards,
           };
           setResults(resultData); // Save the results in state
           // console.log(resultData.winRate);
           console.log(resultData.winningOpponents);
+          // setIsSearchVisible(true); // Show the search results
 
           // Lệnh để lấy ra 3 lá bài phổ biến nhất của player
           API.getFavoriteCards(inputValue)
@@ -84,19 +97,14 @@ const SearchInput = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (inputValue === "") {
+  //     setIsSearchVisible(false);
+  //   }
+  // }, [inputValue]);
+
   return (
-    <MotionBox
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{
-        duration: 0.3,
-        type: "spring",
-        stiffness: 110,
-        delay: 0.2,
-      }}
-      className="my-8 max-w-6xl w-11/12 mx-auto sm:my-10 text-[2.5rem] font-bold text-center text-white"
-    >
-      See your most used deck analysis
+    <>
       <MotionBox
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -104,50 +112,63 @@ const SearchInput = () => {
           duration: 0.3,
           type: "spring",
           stiffness: 110,
-          delay: 0.3,
+          delay: 0.2,
         }}
-        className="flex flex-col items-center justify-center my-7 mx-1" //chỉnh thụt lề trái phải ở đ
+        className="my-8 max-w-6xl w-11/12 mx-auto sm:my-10 text-[2.5rem] font-bold text-center text-white"
       >
-        <InputGroup
-          justifyContent={"center"}
-          alignItems={"center"}
-          display={"flex"}
-          flexDirection={"column"}
-          w={"100%"}
-          maxW={"300px"}
-          maxH={"20px"}
+        See your most used deck analysis
+        <MotionBox
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{
+            duration: 0.3,
+            type: "spring",
+            stiffness: 110,
+            delay: 0.3,
+          }}
+          className="flex flex-col items-center justify-center my-7 mx-1" //chỉnh thụt lề trái phải ở đ
         >
-          <Input
+          <InputGroup
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+            flexDirection={"column"}
+            w={"100%"}
+            maxW={"300px"}
+            maxH={"20px"}
+          >
+            <Input
+              colorScheme="purple"
+              id="combo-box-demo"
+              placeholder="#Player tag"
+              borderColor="white"
+              borderRadius="md"
+              p={7}
+              bg="transparent"
+              color="white"
+              fontStyle={"italic"}
+              fontWeight={"normal"}
+              fontSize={"1.5rem"}
+              onChange={(e) => setInputValue(e.target.value)}
+              value={inputValue}
+              textAlign={"center"}
+            />
+          </InputGroup>
+          <Button
+            leftIcon={<IoSearchOutline />}
             colorScheme="purple"
-            id="combo-box-demo"
-            placeholder="#Player tag"
-            borderColor="white"
-            borderRadius="md"
-            p={7}
-            bg="transparent"
-            color="white"
-            fontStyle={"italic"}
-            fontWeight={"normal"}
-            fontSize={"1.5rem"}
-            onChange={(e) => setInputValue(e.target.value)}
-            value={inputValue}
-            textAlign={"center"}
-          />
-        </InputGroup>
-        <Button
-          leftIcon={<IoSearchOutline />}
-          colorScheme="purple"
-          variant="solid"
-          size="lg"
-          mt={10}
-          onClick={HandleSearchBattleLog}
-        >
-          Search
-        </Button>
-        {results && <ResultGrid results={results} deckSynergyNames={deckSynergyNames}/>}{" "}
-        {/* Conditionally render the ResultGrid component with the results as a prop */}
+            variant="solid"
+            size="lg"
+            mt={10}
+            onClick={HandleSearchBattleLog}
+          >
+            Search
+          </Button>
+          {results && <ResultGrid results={results} deckSynergyNames={deckSynergyNames}/>}{" "}
+          {/* Conditionally render the ResultGrid component with the results as a prop */}
+        </MotionBox>
       </MotionBox>
-    </MotionBox>
+    </>
   );
 };
 
