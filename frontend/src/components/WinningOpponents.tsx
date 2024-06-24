@@ -14,8 +14,8 @@ type WinningOpponentsProps = {
 const WinningOpponents = ({ winningOpponents }: WinningOpponentsProps) => {
   return (
     <Box mt={6} textAlign="center">
-      <Text fontSize={["2xl", "3xl"]} fontWeight="bold" color="white">
-        Les decks les plus performants contre votre deck
+      <Text className="text-3xl font-bold text-purple-400 mt-8">
+      Be careful with these players' decks in the coming matches!
       </Text>
       <Grid
         templateColumns={["1fr", "repeat(2, 1fr)", "repeat(4, 1fr)"]}

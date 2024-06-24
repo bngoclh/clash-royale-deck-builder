@@ -10,19 +10,35 @@ const MotionBox = motion(Box);
 
 const SearchInput = () => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames]
+  const [results, setResults] = useState(null); // [playerTag, playerName, elixir, count, cardNames
   const [deckSynergyNames, setDeckSynergyNames] = useState(null);
 
   const HandleSearchBattleLog = () => {
     if (inputValue !== "") {
       API.getMostUsedDeck(inputValue) // call the getBattleLog function from the API-client.ts file
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           const playerName = response.data.playerName;
           const elixir = response.data.elixir;
           const count = response.data.count;
           const cardNames = response.data.cards.map((card: any) => card.name);
           const winRate = response.data.winRate;
+          const trophyChanges = response.data.trophyChanges;
+          const numberOfBattles = response.data.numberOfBattles;
+          const soloCards = response.data.soloCards.map((card: any) => ({
+            cardName: card.cardName,
+            alternatives: card.alternatives,
+          }));
+          const winningOpponents = response.data.WinningOpponents.map(
+            (opponent: any) => ({
+              opponentName: opponent.opponentName,
+              opponentDeck: opponent.opponentDeck.map((card: any) => ({
+                name: card.name,
+                elixirCost: card.elixirCost,
+                rarity: card.rarity,
+              })),
+            })
+          );
           // Create an object with the data we need
           const resultData = {
             playerName,
@@ -30,34 +46,39 @@ const SearchInput = () => {
             count,
             cardNames,
             winRate,
+            trophyChanges,
+            numberOfBattles,
+            soloCards,
+            winningOpponents,
           };
           setResults(resultData); // Save the results in state
           // console.log(resultData.winRate);
+          console.log(resultData.winningOpponents);
 
-          // Add your API.postBattleLog call here
-          API.postBattleLog(inputValue)
-          .then((response) => {
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-
-          // Add API get favorite cards here
+          // Lệnh để lấy ra 3 lá bài phổ biến nhất của player
           API.getFavoriteCards(inputValue)
           .then((response) => {
             console.log(response.data);
             const deckSynergyNames = response.data; // ko cần data.map ở đây
-            setDeckSynergyNames(deckSynergyNames); // Save the deck synergy names in state
+            setDeckSynergyNames(deckSynergyNames); // khi đã lấy thì thay gtri State từ null sang cái vừa lấy
           })
           .catch((error) => {
             console.log(error);
           });
 
+          // Lệnh để lưu data vào MongoDB
+          API.postBattleLog(inputValue)
+            .then((response) => {
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
         });
+
     } else {
       alert("Please enter a player tag");
     }
@@ -123,8 +144,8 @@ const SearchInput = () => {
         >
           Search
         </Button>
-        {results && <ResultGrid results={results} deckSynergyNames={deckSynergyNames} />}{" "}
-        {/* Conditionally render the ResultGrid component with the results and deckSynergyNames as a prop */}
+        {results && <ResultGrid results={results} deckSynergyNames={deckSynergyNames}/>}{" "}
+        {/* Conditionally render the ResultGrid component with the results as a prop */}
       </MotionBox>
     </MotionBox>
   );

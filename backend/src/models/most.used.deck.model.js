@@ -8,14 +8,6 @@ const mostUsedDeckSchema = new mongoose.Schema({
   elixir: { type: Number, required: true },
   winRate: { type: String, required: true },
   count: { type: Number, required: true },
-  date: { type: Date, default: Date.now },
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: { expires: 86000 }  // Ce document sera supprimé après 3 jours
-},
-
   numberOfBattles: { type: Number, required: true },
   top8OpponentCards: {
     type: [
@@ -58,5 +50,3 @@ const mostUsedDeckSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);
-
-

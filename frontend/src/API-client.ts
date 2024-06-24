@@ -28,15 +28,6 @@ const getBattleLog = (playerTag: string) => {
   return request;
 }
 
-const getFavoriteCards = (playerTag: string) => {
-  const request = axios.get(`http://localhost:3000/api/synergy/favoritecards/${playerTag}`, {
-    headers: {
-      Authorization: `Bearer ${config.API_KEY}`,
-    },
-  });
-  return request;
-}
-
 const getMostUsedDeck = (playerTag: string) => {
   const request = axios.get(`http://localhost:3000/api/deck/getmostuseddeck/${playerTag}`, {
     headers: {
@@ -46,4 +37,14 @@ const getMostUsedDeck = (playerTag: string) => {
   return request;
 }
 
-export default { axiosInstance, postBattleLog, getBattleLog, getFavoriteCards, getMostUsedDeck };
+const getFavoriteCards = (playerTag: string) => {
+  const request = axios.get(`http://localhost:3000/api/synergie/favoritecards/${playerTag}`, {
+    headers: {
+      Authorization: `Bearer ${config.API_KEY}`,
+    },
+  });
+
+  return request;
+}
+
+export default { axiosInstance, postBattleLog, getBattleLog, getMostUsedDeck, getFavoriteCards };
