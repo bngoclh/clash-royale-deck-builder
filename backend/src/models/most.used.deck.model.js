@@ -15,6 +15,46 @@ const mostUsedDeckSchema = new mongoose.Schema({
     default: Date.now,
     index: { expires: 86000 }  // Ce document sera supprimé après 3 jours
 },
+
+  numberOfBattles: { type: Number, required: true },
+  top8OpponentCards: {
+    type: [
+      {
+        name: { type: String, required: true },
+        totalCount: { type: Number, required: true },
+        elixirCost: { type: Number, required: true },
+        rarity: { type: String, required: true },
+      },
+    ],
+    required: true,
+  },
+  WinningOpponents: {
+    type: [
+      {
+        opponentName: { type: String, required: true },
+        opponentDeck: [
+          {
+            name: { type: String, required: true },
+            elixirCost: { type: Number, required: true },
+            rarity: { type: String },
+          },
+        ],
+      },
+    ],
+    synergies: [
+      {
+        card: { type: String, required: true },
+        synergiesList: [{ type: String, required: true }],
+      },
+    ],
+    soloCards: [
+      {
+        cardName: { type: String, required: true },
+        alternatives: [{ type: String, required: true }],
+      },
+    ],
+    date: { type: Date, default: Date.now },
+  },
 });
 
 module.exports = mongoose.model("MostUsedDeck", mostUsedDeckSchema);

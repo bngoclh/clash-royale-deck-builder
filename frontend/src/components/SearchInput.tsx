@@ -17,7 +17,7 @@ const SearchInput = () => {
     if (inputValue !== "") {
       API.getMostUsedDeck(inputValue) // call the getBattleLog function from the API-client.ts file
         .then((response) => {
-          // console.log(response.data);
+          console.log(response.data);
           const playerName = response.data.playerName;
           const elixir = response.data.elixir;
           const count = response.data.count;

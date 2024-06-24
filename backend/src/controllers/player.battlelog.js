@@ -5,7 +5,7 @@ const Battlelog = require("../models/battlelog.model");
 const getPlayerBattles = async (playertag) => {
   try {
     const response = await axios.get(
-      `https://api.clashroyale.com/v1/players/%23${playertag}/battlelog`,
+      `https://proxy.royaleapi.dev/v1/players/%23${playertag}/battlelog`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
@@ -63,7 +63,7 @@ const pushBattleLog = async (battlelog,playerTag) =>{
 const getBattleLog = async (playertag) => {
   try {
     const response = await axios.get(
-      `https://api.clashroyale.com/v1/players/%23${playertag}/battlelog`,
+      `https://proxy.royaleapi.dev/v1/players/%23${playertag}/battlelog`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,

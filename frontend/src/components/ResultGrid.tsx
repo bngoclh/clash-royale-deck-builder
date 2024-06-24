@@ -1,7 +1,9 @@
-// Trong file ResultGrid.tsx
 import { Grid } from "@chakra-ui/react";
 import WinPieChart from "./WinRateChart";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+// import TrophyChangeLineChart from "./TrophyChangeChart";
+// import SoloCards from "./SoloCards";
+// import WinningOpponents from "./WinningOpponents";
 
 const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNames: any }) => {
   // Destructure the results object to get the data
@@ -54,3 +56,7 @@ const ResultGrid = ({ results, deckSynergyNames }: { results: any, deckSynergyNa
 };
 
 export default ResultGrid;
+
+
+
+
