@@ -28,6 +28,16 @@ const SearchInput = () => {
             cardName: card.cardName,
             alternatives: card.alternatives,
           }));
+          const winningOpponents = response.data.WinningOpponents.map(
+            (opponent: any) => ({
+              opponentName: opponent.opponentName,
+              opponentDeck: opponent.opponentDeck.map((card: any) => ({
+                name: card.name,
+                elixirCost: card.elixirCost,
+                rarity: card.rarity,
+              })),
+            })
+          );
           // Create an object with the data we need
           const resultData = {
             playerName,
@@ -38,10 +48,11 @@ const SearchInput = () => {
             trophyChanges,
             numberOfBattles,
             soloCards,
+            winningOpponents,
           };
           setResults(resultData); // Save the results in state
           // console.log(resultData.winRate);
-          console.log(resultData.soloCards);
+          console.log(resultData.winningOpponents);
 
           // Add your API.postBattleLog call here
           API.postBattleLog(inputValue)

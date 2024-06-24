@@ -1,7 +1,8 @@
-import { Grid, Box, Text, Image } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import WinPieChart from "./WinRateChart";
 import TrophyChangeLineChart from "./TrophyChangeChart";
 import SoloCards from "./SoloCards";
+import WinningOpponents from "./WinningOpponents";
 
 const ResultGrid = ({ results }: { results: any }) => {
   const {
@@ -12,7 +13,8 @@ const ResultGrid = ({ results }: { results: any }) => {
     winRate,
     trophyChanges,
     numberOfBattles,
-    soloCards, // include soloCards in the destructure
+    soloCards,
+    winningOpponents,
   } = results;
 
   return (
@@ -35,10 +37,12 @@ const ResultGrid = ({ results }: { results: any }) => {
             Count: {count} / {numberOfBattles}
           </p>
           <p className="text-left">Average Elixir: {elixir}</p>
+          <p className="text-left">Rare card: à finir après</p>
         </div>
       </nav>
       <TrophyChangeLineChart trophyChanges={trophyChanges} />
       <SoloCards soloCards={soloCards} />
+      <WinningOpponents winningOpponents={winningOpponents} />
     </>
   );
 };

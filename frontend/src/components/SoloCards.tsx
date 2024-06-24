@@ -1,25 +1,14 @@
-import React from "react";
 import { Box, Text, Image, Grid } from "@chakra-ui/react";
 
-interface SoloCardProps {
+type SoloCardProps = {
   soloCards: {
     cardName: string;
     alternatives: string[];
   }[];
-}
+};
 
-const SoloCards: React.FC<SoloCardProps> = ({ soloCards }) => {
+const SoloCards = ({ soloCards }: SoloCardProps) => {
   const firstCard = soloCards[0];
-
-  if (soloCards.length === 0) {
-    return (
-      <Box mt={6} textAlign="center">
-        <Text fontSize={["2xl", "3xl"]} fontWeight="bold" color="white">
-          Le deck est bien construit
-        </Text>
-      </Box>
-    );
-  }
 
   return (
     <Box mt={6} textAlign="center">
