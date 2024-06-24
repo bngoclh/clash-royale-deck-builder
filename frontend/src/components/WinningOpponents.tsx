@@ -17,7 +17,11 @@ const WinningOpponents = ({ winningOpponents }: WinningOpponentsProps) => {
       <Text fontSize={["2xl", "3xl"]} fontWeight="bold" color="white">
         Les decks les plus performants contre votre deck
       </Text>
-      <Grid templateColumns="repeat(4, 1fr)" gap={4} mt={6}>
+      <Grid
+        templateColumns={["1fr", "repeat(2, 1fr)", "repeat(4, 1fr)"]}
+        gap={4}
+        mt={6}
+      >
         {winningOpponents.map((opponent, index) => (
           <Box
             key={index}
@@ -33,9 +37,10 @@ const WinningOpponents = ({ winningOpponents }: WinningOpponentsProps) => {
               {opponent.opponentDeck.map((card) => (
                 <Box key={card.name}>
                   <Image
-                    boxSize={["25px", "70px", "70px"]}
+                    boxSize={["50px", "70px", "90px"]}
                     src={`/${card.name}.png`}
                     alt={card.name}
+                    objectFit="contain"
                   />
                 </Box>
               ))}

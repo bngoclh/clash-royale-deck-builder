@@ -1,14 +1,25 @@
+import React from "react";
 import { Box, Text, Image, Grid } from "@chakra-ui/react";
 
-type SoloCardProps = {
+interface SoloCardProps {
   soloCards: {
     cardName: string;
     alternatives: string[];
   }[];
-};
+}
 
 const SoloCards = ({ soloCards }: SoloCardProps) => {
-  const firstCard = soloCards[0];
+  const firstCard = soloCards.length > 0 ? soloCards[0] : null;
+
+  if (soloCards.length === 0) {
+    return (
+      <Box mt={6} textAlign="center">
+        <Text fontSize={["2xl", "3xl"]} fontWeight="bold" color="white">
+          Le deck est bien construit
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box mt={6} textAlign="center">
@@ -37,22 +48,24 @@ const SoloCards = ({ soloCards }: SoloCardProps) => {
             ))}
           </Grid>
         </Box>
-        <Box>
-          <Text fontSize={["lg", "xl"]} color="white">
-            Suggested alternatives
-          </Text>
-          <Grid templateColumns="repeat(4, 1fr)" gap={2}>
-            {firstCard.alternatives.map((alt) => (
-              <Box key={alt}>
-                <Image
-                  boxSize={["75px", "100px", "150px"]}
-                  src={`/${alt}.png`}
-                  alt={alt}
-                />
-              </Box>
-            ))}
-          </Grid>
-        </Box>
+        {firstCard && firstCard.alternatives && (
+          <Box>
+            <Text fontSize={["lg", "xl"]} color="white">
+              Suggested alternatives
+            </Text>
+            <Grid templateColumns="repeat(4, 1fr)" gap={2}>
+              {firstCard.alternatives.map((alt) => (
+                <Box key={alt}>
+                  <Image
+                    boxSize={["75px", "100px", "150px"]}
+                    src={`/${alt}.png`}
+                    alt={alt}
+                  />
+                </Box>
+              ))}
+            </Grid>
+          </Box>
+        )}
       </Grid>
       <Text fontSize="sm" color="white" mt={8}>
         Try these new card combinations in your next match!
