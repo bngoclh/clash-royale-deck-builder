@@ -45,6 +45,7 @@ const TrophyChangeLineChart = ({
         ticks: {
           color: "white",
           beginAtZero: false,
+  
         },
         grid: {
           color: "rgba(255, 255, 255, 0.2)", // Color of the grid lines
@@ -57,6 +58,7 @@ const TrophyChangeLineChart = ({
       y: {
         ticks: {
           color: "white",
+          margin: 20,
         },
         grid: {
           color: "rgba(255, 255, 255, 0.2)", // Color of the grid lines

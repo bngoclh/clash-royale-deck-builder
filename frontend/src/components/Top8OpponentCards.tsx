@@ -13,7 +13,7 @@ const Top8OpponentCards = ({ top8OpponentCards }: Top8OpponentCardsProps) => {
   return (
     <Box mt={6} textAlign="center">
       <Text className="text-3xl font-bold text-purple-400 mt-5">
-        Top 8 Opponent Cards
+        Cards most used by your opponents
       </Text>
       <Grid templateColumns="repeat(8, 1fr)" gap={3} mt={6}>
         {top8OpponentCards.map((card) => (
