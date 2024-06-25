@@ -34,8 +34,8 @@ const SoloCards = ({ soloCards }: SoloCardProps) => {
       {/* <Grid templateColumns={["1fr", "1fr 1fr"]} gap={10} mt={6}> */}
       <Grid className="grid grid-cols-1 gap-10 mt-6 sm:grid-cols-2">
         <Box>
-          <Text className="text-lg text-white mt-5 mb-5">
-            You might want to replace these cards:
+          <Text className="text-left text-lg text-white mt-5 mb-5">
+            You might want to replace these cards...
           </Text>
           <Grid templateColumns="repeat(4, 1fr)" gap={2}>
             {soloCards.map((card) => (
@@ -53,8 +53,8 @@ const SoloCards = ({ soloCards }: SoloCardProps) => {
         </Box>
         {firstCard && firstCard.alternatives && (
           <Box>
-            <Text className="text-lg text-white mt-5 mb-5">
-              by these cards:
+            <Text className="text-left text-lg text-white mt-5 mb-5">
+              by these cards :
             </Text>
             <Grid templateColumns="repeat(4, 1fr)" gap={2}>
               {firstCard.alternatives.map((alt) => (

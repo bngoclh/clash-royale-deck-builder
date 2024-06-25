@@ -12,7 +12,7 @@ type Top8OpponentCardsProps = {
 const Top8OpponentCards = ({ top8OpponentCards }: Top8OpponentCardsProps) => {
   return (
     <Box mt={6} textAlign="center">
-      <Text fontSize={["2xl", "3xl"]} fontWeight="bold" color="white">
+      <Text className="text-3xl font-bold text-purple-400 mt-5">
         Top 8 Opponent Cards
       </Text>
       <Grid templateColumns="repeat(8, 1fr)" gap={3} mt={6}>
